@@ -1,0 +1,137 @@
+\begin{frame}{SecFprMul: Secure FprMul}
+
+\centerline{
+\blockalgstart{.9\textwidth}{{\large FprMul}}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{multicols}{2}
+  \begin{algorithmic}[1]
+    \REQUIRE \textcolor<2>{red}{FPN $x = (sx, ex, mx)$}
+    \REQUIRE \textcolor<2>{red}{FPN $y = (sy, ey, my)$}
+    \ENSURE FPN product of $x$ and $y$
+
+    \STATE \textcolor<3>{red}{ $s \gets sx \oplus sy$}
+    \STATE \textcolor<3>{red}{ $e \gets ex + ey - 2100$}
+
+    \STATE \textcolor<4>{red}{$z \gets mx \times my$}
+
+    \STATE \textcolor<5-6>{red}{ $b \gets \llbracket z^{[50:1]} \neq 0 \rrbracket$}
+    \STATE \textcolor<5-6>{red}{ $z \gets z^{[106:51]} \vee b$ }
+    \STATE \textcolor<5-6>{red}{ $z' \gets (z \gg 1) \vee z^{(1)}$ }
+    \STATE \textcolor<5-6>{red}{ $w \gets z^{(106)}$ }
+    \STATE \textcolor<5-6>{red}{$z \gets z \oplus (z \oplus z') \wedge (-w)$ }
+
+    \STATE \textcolor<7>{red}{$e \gets e + w$}
+ 
+    \STATE \textcolor<8>{red}{$bx \gets \llbracket ex \neq 0 \rrbracket$, $by \gets \llbracket ey \neq 0 \rrbracket$}
+    \STATE \textcolor<8>{red}{$b \gets bx \wedge by$}
+    \STATE \textcolor<8>{red}{$z \gets z \wedge (-b)$} \\
+    \RETURN \hskip -4pt \textcolor<9>{red}{${\sf FPR}(s, e, z)$}
+  \end{algorithmic}
+  \end{multicols}
+\vspace{-10pt}
+\end{algorithm}
+
+\blockalgend
+}
+\medskip
+
+\only<1>{
+We show how we mask the floating-point number multiplication algorithm {\sf FprMul}.
+}
+
+\only<2>{
+We assume $(sx_i)$ and $(sy_i)$ are Boolean shares, $(ex_i)$ and $(ey_i)$ are 16-bit arithmetic shares, and $(mx_i)$ and $(my_i)$ are 128-bit arithmetic shares, which can load the product of two $53$-bit values.
+}
+
+
+\only<3>{
+These can be operated share-wise.
+}
+
+
+\only<4>{
+This is done by {\sf SecMult}. For further operations, we then apply an {\sf A2B} to turn them to Boolean shares.
+}
+
+
+\only<5>{
+Conditional shift by $50$ bits and $51$ bits, depending on $z^{(106)}$, while preserving the sticky bit.
+
+These can be done by {\sf SecNonzero} and {\sf SecOr}.
+
+}
+
+\only<6>{
+We observe that we can save one {\sf SecOR}.
+\begin{itemize}
+\item When shifted by $50$ bits, we OR the last bit with $z^{[50:1]}$.
+\item When shifted by $51$ bits, we OR the last bit with $z^{[51:1]}$.
+\end{itemize}
+We can simply OR the the last bit with $z^{[51:1]}$, regardless of the conditional shift result.
+}
+
+
+\only<7>{
+This is by adding to any share.
+}
+
+
+
+\only<8>{
+This is by {\sf SecNonzero} and {\sf SecAnd}, and applying the simple trick.
+}
+
+
+
+\only<9>{
+Now it calls {\sf FPR} to return a 64-bit Boolean-masked FPN.
+}
+
+\end{frame}
+
+
+\begin{frame}{SecFprMul: Secure FprMul}
+
+
+\centerline{
+\blockalgstart{\textwidth}{SecFprMul}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \label{alg:SecFprMul}
+  \small
+  \begin{multicols}{2}
+  \begin{algorithmic}[1]
+    \REQUIRE Shares ${(sx_i)_{1\leq i \leq n}}, {(ex_i)_{1\leq i \leq n}}, {(mx_i)_{1\leq i \leq n}}$
+    \REQUIRE Shares ${(sy_i)_{1\leq i \leq n}}, {(ey_i)_{1\leq i \leq n}}, {(my_i)_{1\leq i \leq n}}$
+    \ENSURE Boolean shares for the FPN product.
+    \STATE $(s_i) \gets (sx_i \oplus sy_i)$ \label{alg:SecFprMul:sign_add}
+    \STATE $(e_i) \gets (ex_1 + ey_1 - 2100, ex_2 + ey_2, \cdots)$ \label{alg:SecFprMul:exp_add}
+    \STATE $(p_i) \gets {\sf SecMult}((mx_i), (my_i))$ \label{alg:SecFprMul:mant_mul}
+    \STATE $(p_i) \gets {\sf A2B}((p_i))$ \label{alg:SecFprMul:128A2B}
+    \STATE $(b_i) \gets {\sf SecNonzero}( (p_i^{[51:1]}) )$ \label{alg:SecFprMul:bool_nonzero}
+    \STATE $(z_i) \gets (p_i^{[105:51]})$ \label{alg:SecFprMul:shift_start}
+    \STATE $(z'_i) \gets (p_i^{[105:51]} \oplus p_i^{[106:52]})$
+    \STATE $(w_i) \gets (p_i^{(106)})$
+    \STATE $(z'_i) \gets {\sf SecAnd}( (z'_i), {\sf Refresh}((-w_i) ))$ \label{alg:SecFprMul:condition}
+    \STATE $(z_i) \gets (z'_i \oplus z_i)$ \label{alg:SecFprMul:shift}
+    \STATE $(z_i) \gets {\sf SecOr}( (z_i), (b_i) )$ \label{alg:SecFprMul:stickybit}
+    \STATE $(w_i) \gets {\sf B2A_{Bit}}((w_i))$
+    \STATE $(e_i) \gets (e_i + w_i)$ \label{alg:SecFprMul:add106}
+    \STATE $(bx_i) \gets {\sf SecNonzero}( (ex_i) )$ \label{alg:SecFprMul:arith_nonzero_1}
+    \STATE $(by_i) \gets {\sf SecNonzero}( (ey_i) )$ \label{alg:SecFprMul:arith_nonzero_2}
+    \STATE $(d_i) \gets {\sf SecAnd}( (bx_i), (by_i) )$
+    \STATE $(z_i) \gets {\sf SecAnd}( (z_i) , (-d_i^{(1)}) )$ \label{alg:SecFprMul:check_exp}
+    \STATE \Return ${\sf SecFPR}( (s_i) , (e_i) , (z_i) )$
+  \end{algorithmic}
+  \end{multicols}
+\vspace{-10pt}
+\end{algorithm}
+
+\blockalgend
+}
+\medskip
+
+
+
+\end{frame}

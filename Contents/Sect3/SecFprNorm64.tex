@@ -1,0 +1,100 @@
+\begin{frame}{SecFprNorm64}
+
+Given 64-bit shares $(x_i)$ and 16-bit shares $(e_i)$, we need to derive new $(x_i')$ and $(e_i')$ such that
+\[
+\text{if } c \text{ is the smallest integer such that } \left( (\oplus_{i=1}^n x_i) \ll c \right) \in [2^{63}, 2^{64})
+\]
+\[
+\text{then } (\oplus_{i=1}^n x_i') = \left( (\oplus_{i=1}^n x_i) \ll c \right) \text{ and } \sum_{i=1}^n e_i' = (\sum_{i=1}^n e_i) - c
+\]
+\pause
+
+We can repeatedly check whether $(x^{(64)}_i) = 0$, conditionally shift by $1$ bit, and then decrease $(e_i)$ by $\llbracket (x^{(64)}_i) = 0 \rrbracket$.
+\pause
+
+To improve efficiency, we consider sequentially checking $x^{[64:64-2^j]} = 0$ for $j = 5,4,\cdots,0$.
+\pause
+
+In addition, we first decrease $(e_i)$ by $63$ and later add $\llbracket (x^{[64:64-2^j]}_i) \neq 0 \rrbracket \cdot 2^j$ to it.
+\end{frame}
+
+\begin{frame}{SecFprNorm64}
+
+\centerline{
+\blockalgstart{.78\textwidth}{{\large SecFprNorm64}}
+\begin{algorithm}[H]
+  \label{alg:SecFprNorm64}
+  \algsetup{linenosize=\small}
+  \small
+  % \begin{multicols}{2}
+  \begin{algorithmic}[1]
+    \REQUIRE 64-bit Boolean shares ${(x_i)_{1\leq i \leq n}}$
+    \REQUIRE 16-bit arithmetic shares ${(e_i)_{1\leq i \leq n}}$
+    \ENSURE Normalized ${(x_i)_{1\leq i \leq n}}$ in $[2^{63}, 2^{64})$ and ${(e_i)_{1\leq i \leq n}}$ with shift added
+    \STATE $e_1 \gets e_1 - 63$
+    \FOR{$j = 5$ to $0$}
+        \STATE $(t_i) \gets (x_i \oplus (x_i \ll 2^j))$
+        \STATE $(n_i) \gets (x_i \gg (64 - 2^j))$
+        \STATE $(b_i) \gets {\sf SecNonzero}( (n_i) )$
+        \STATE $(b'_i) \gets (-b_i)$
+        \STATE $(t_i) \gets {\sf SecAnd}( (t_i), { (\neg b'_1, b'_2,\cdots, b'_n)} )$
+        \STATE $(x_i) \gets (x_i \oplus t_i)$
+        \STATE $(b_i) \gets {\sf B2A_{Bit}}( (b_i) )$
+        \STATE $(e_i) \gets (e_i + (b_i \ll j))$
+    \ENDFOR
+    \STATE \Return $(x_i), (e_i)$
+\end{algorithmic}
+% \end{multicols}
+\vskip -5pt
+\end{algorithm}
+
+\blockalgend
+}
+
+\end{frame}
+
+
+\iffalse
+%
+%
+%
+\begin{frame}{SecFprNorm64 in Masking FprAdd}
+
+\centerline{
+\blockalgstart{.9\textwidth}{{\large FprAdd}}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{multicols}{2}
+  \small
+  \begin{algorithmic}[1]
+    \REQUIRE FPNs $x$ and $y$
+    \ENSURE FPN sum of $x$ and $y$
+    \STATE $d \gets x^{[63:1]} - y^{[63:1]}$
+    \STATE $cs \gets d^{(64)} \vee ((1 - (-d)^{(64)}) \wedge x^{(64)}) $
+    \STATE $m \gets (x \oplus y) \wedge (-cs)$
+    \STATE $x \gets x \oplus m, y \gets y \oplus m$
+    \STATE Extract $(sx, ex, mx)$ and $(sy, ey, my)$ from $x, y$, respectively.
+    \STATE $mx \gets mx \ll 3, my \gets my \ll 3$
+    \STATE $ex \gets ex - 1078, ey \gets ey - 1078$
+    \STATE $c \gets ex - ey$
+    \STATE $b \gets \llbracket c < 60 \rrbracket$ 
+    \STATE $my \gets my \wedge (-b) $ 
+    \STATE $my \gets (my \gg c) \vee \llbracket my^{[c:1]} \neq 0 \rrbracket$
+    \STATE $s \gets sx \oplus sy$
+    \STATE $z \gets mx + (-1)^s my $
+    \STATE \textcolor{red}{Normalize $z, ex$ to make the 64th bit of $z$ set}
+    \STATE $z \gets (z \gg  9) \vee \llbracket z^{[9:1]} \neq 0 \rrbracket$
+    \STATE $ex \gets ex + 9$ \\
+    \RETURN \hskip -4pt ${\sf FPR}(sx, ex, z)$
+  \end{algorithmic}
+  \end{multicols}
+\end{algorithm}
+\vspace{-10pt}
+\blockalgend
+}
+
+\end{frame}
+%
+%
+%
+\fi

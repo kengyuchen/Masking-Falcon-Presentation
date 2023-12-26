@@ -1,0 +1,253 @@
+\begin{frame}{Simple Tricks}
+
+If we want to operate the following operations:
+\centerline{
+\blockalgstart{.2\textwidth}{}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{algorithmic}[1]
+    \IF{$a = 0$}
+        \STATE $b \gets 0$
+    \ENDIF
+\end{algorithmic}
+\end{algorithm}
+\vspace{-2pt}
+\blockalgend
+}
+\medskip
+
+Suppose $a$ is one-bit, we may write it as
+\vskip -4pt
+\centerline{
+\blockalgstart{.2\textwidth}{}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{algorithmic}[1]
+    \STATE $b \gets b \wedge (-a)$
+\end{algorithmic}
+\end{algorithm}
+\vspace{-3pt}
+\blockalgend
+}
+\medskip
+
+We also apply the same idea for Boolean-shared values in our design
+% \vskip -2pt
+\centerline{
+\blockalgstart{.34\textwidth}{}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{algorithmic}[1]
+    \STATE $(b_i) \gets {\sf SecAnd}((b_i), (-a_i))$
+\end{algorithmic}
+\end{algorithm}
+\vspace{-3pt}
+\blockalgend
+}
+\medskip
+
+We utilize that $\bigoplus_{i=1}^n -a_i = -a$, which is not true for general $k$-bit $a$.
+\end{frame}
+
+
+\begin{frame}{Simple Tricks}
+
+Similarly, for operations
+\centerline{
+\blockalgstart{.2\textwidth}{}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{algorithmic}[1]
+    \IF{$a = 1$}
+        \STATE $b \gets 0$
+    \ENDIF
+\end{algorithmic}
+\end{algorithm}
+\vspace{-2pt}
+\blockalgend
+}
+\medskip
+
+Suppose $a$ is one-bit, we may write it as
+\vskip -4pt
+\centerline{
+\blockalgstart{.23\textwidth}{}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{algorithmic}[1]
+    \STATE $b \gets b \wedge (\neg(-a))$
+\end{algorithmic}
+\end{algorithm}
+\vspace{-3pt}
+\blockalgend
+}
+\medskip
+
+For Boolean-shared values,
+% \vskip -2pt
+\centerline{
+\blockalgstart{.45\textwidth}{}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{algorithmic}[1]
+    \STATE $(c_i) \gets (-a_i)$
+    \STATE $(b_i) \gets {\sf SecAnd}((b_i), (\neg c_1, c_2, \cdots, c_n))$
+\end{algorithmic}
+\end{algorithm}
+\vspace{-3pt}
+\blockalgend
+}
+\medskip
+\end{frame}
+
+
+\begin{frame}{Simple Tricks}
+
+Moreover, for operations,
+\centerline{
+\blockalgstart{.2\textwidth}{}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{algorithmic}[1]
+    \IF{$a = 1$}
+        \STATE $b \gets c$
+    \ENDIF
+\end{algorithmic}
+\end{algorithm}
+\vspace{-2pt}
+\blockalgend
+}
+\medskip
+
+Suppose $a$ is one-bit, we may write it as
+\vskip -4pt
+\centerline{
+\blockalgstart{.25\textwidth}{}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{algorithmic}[1]
+    \STATE $d \gets b \oplus c$
+    \STATE $b \gets b \oplus (d \wedge (-a))$
+\end{algorithmic}
+\end{algorithm}
+\vspace{-3pt}
+\blockalgend
+}
+\medskip
+
+For Boolean-shared values,
+% \vskip -2pt
+\centerline{
+\blockalgstart{.35\textwidth}{}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{algorithmic}[1]
+    \STATE $(d_i) \gets (b_i \oplus c_i)$
+    \STATE $(d_i) \gets {\sf SecAnd}((d_i), (-a_i))$
+    \STATE $(b_i) \gets (b_i \oplus d_i)$
+\end{algorithmic}
+\end{algorithm}
+\vspace{-3pt}
+\blockalgend
+}
+\medskip
+\end{frame}
+
+
+
+\begin{frame}{Simple Tricks in Masking FPR}
+
+\centerline{
+\blockalgstart{.6\textwidth}{{\large FPR}}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{algorithmic}[1]
+    \REQUIRE Sign bit $s$, exponent $e$, and 55-bit mantissa $z$
+    \ENSURE FPN $x$ packed by $s, e, z$
+    \STATE $e \gets e + 1076$
+    \STATE $b \gets \llbracket e < 0 \rrbracket$
+    \STATE \textcolor{red}{$z \gets z \wedge (b-1)$}
+    \STATE $b \gets \llbracket z \neq 0 \rrbracket $
+    \STATE \textcolor{red}{$e \gets e \wedge (-b)$}
+    \STATE $x \gets ((s \ll 63) \vee (z \gg 2)) + e \ll 52$
+    \STATE $f \gets {\tt0XC8} \gg z^{[3:1]} $
+    \STATE $x \gets x + f^{(1)}$ \COMMENT{increment if $z^{[3:1]}$ is 011,110 or 111} \\ 
+    \RETURN \hskip -4pt $x$
+  \end{algorithmic}
+\end{algorithm}
+\blockalgend
+}
+
+\end{frame}
+
+
+\begin{frame}{Simple Tricks in Masking FprMul}
+
+\centerline{
+\blockalgstart{.9\textwidth}{{\large FprMul}}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{multicols}{2}
+  \begin{algorithmic}[1]
+    \REQUIRE FPN $x = (sx, ex, mx)$
+    \REQUIRE FPN $y = (sy, ey, my)$
+    \ENSURE FPN product of $x$ and $y$
+    \STATE $s \gets sx \oplus sy$ 
+    \STATE $e \gets ex + ey - 2100$ 
+    \STATE $z \gets mx \times my$
+    \STATE $b \gets \llbracket z^{[50:1]} \neq 0 \rrbracket$
+    \STATE $z \gets z^{[106:51]} \vee b$
+    \STATE $z' \gets (z \gg 1) \vee z^{(1)}$
+    \STATE $w \gets z^{(106)}$
+    \STATE \textcolor{red}{$z \gets z \oplus (z \oplus z') \wedge (-w)$}
+    \STATE $e \gets e + w$
+    \STATE $bx \gets \llbracket ex \neq 0 \rrbracket$, $by \gets \llbracket ey \neq 0 \rrbracket$
+    \STATE $b \gets bx \wedge by$
+    \STATE \textcolor{red}{$z \gets z \wedge (-b)$} \\
+    \RETURN \hskip -4pt ${\sf FPR}(s, e, z)$
+  \end{algorithmic}
+  \end{multicols}
+\end{algorithm}
+\vspace{-10pt}
+\blockalgend
+}
+
+\end{frame}
+
+
+\begin{frame}{Simple Tricks in Masking FprAdd}
+
+\centerline{
+\blockalgstart{.9\textwidth}{{\large FprAdd}}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{multicols}{2}
+  \small
+  \begin{algorithmic}[1]
+    \REQUIRE FPNs $x$ and $y$
+    \ENSURE FPN sum of $x$ and $y$
+    \STATE $d \gets x^{[63:1]} - y^{[63:1]}$
+    \STATE $cs \gets d^{(64)} \vee ((1 - (-d)^{(64)}) \wedge x^{(64)}) $
+    \STATE \textcolor{red}{$m \gets (x \oplus y) \wedge (-cs)$}
+    \STATE \textcolor{red}{$x \gets x \oplus m, y \gets y \oplus m$}
+    \STATE Extract $(sx, ex, mx)$ and $(sy, ey, my)$ from $x, y$, respectively.
+    \STATE $mx \gets mx \ll 3, my \gets my \ll 3$
+    \STATE $ex \gets ex - 1078, ey \gets ey - 1078$
+    \STATE $c \gets ex - ey$
+    \STATE $b \gets \llbracket c < 60 \rrbracket$ 
+    \STATE \textcolor{red}{$my \gets my \wedge (-b) $ }
+    \STATE $my \gets (my \gg c) \vee \llbracket my^{[c:1]} \neq 0 \rrbracket$
+    \STATE $s \gets sx \oplus sy$
+    \STATE $z \gets mx + (-1)^s my $
+    \STATE Normalize $z, ex$ to make the 64th bit of $z$ set
+    \STATE $z \gets (z \gg  9) \vee \llbracket z^{[9:1]} \neq 0 \rrbracket$
+    \STATE $ex \gets ex + 9$ \\
+    \RETURN \hskip -4pt ${\sf FPR}(sx, ex, z)$
+  \end{algorithmic}
+  \end{multicols}
+\end{algorithm}
+\vspace{-10pt}
+\blockalgend
+}
+
+\end{frame}

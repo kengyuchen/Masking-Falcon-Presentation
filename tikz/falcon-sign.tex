@@ -1,0 +1,103 @@
+\begin{figure}
+\centering
+
+% \begin{tikzpicture}[node distance=2cm, gridded]
+\begin{tikzpicture}[node distance=2cm]
+
+% Gadgets
+\node (hash) [rectangle, rounded corners, 
+minimum width=1cm, 
+minimum height=1cm,
+text centered,
+fill=white!70!black,
+draw=black] at (0,0) {$H$};
+\coordinate (hash-in1) at ($(hash) + (-0.5,0.2)$);
+\coordinate (hash-in2) at ($(hash) + (-0.5,-0.2)$);
+
+
+\node (FFT) [rectangle, rounded corners, 
+minimum width=1cm, 
+minimum height=1cm,
+text centered,
+fill=white!70!black,
+draw=black, right of=hash, xshift=-0.5cm] {{\sf FFT}}; 
+
+\node (point-mult) [rectangle, rounded corners, 
+minimum width=1cm, 
+minimum height=1cm,
+text centered, 
+fill=white!50!red,
+draw=black, right of=FFT, xshift=-0.5cm] {$\bigodot$};
+\coordinate (point-mult-in1) at ($(point-mult) + (-0.5,0.2)$);
+\coordinate (point-mult-in2) at ($(point-mult) + (-0.5,-0.2)$);
+
+\node (samp) [rectangle, rounded corners, 
+minimum width=1cm, 
+minimum height=1cm,
+text centered, 
+fill=white!50!green,
+draw=black, right of=point-mult] {{\sf Samp}};
+\coordinate (samp-in1) at ($(samp) + (-0.5,0.2)$);
+\coordinate (samp-in2) at ($(samp) + (-0.5,-0.2)$);
+
+\node (compare) [rectangle, rounded corners, 
+minimum width=1cm, 
+minimum height=1cm,
+text centered, 
+fill=white!70!black,
+draw=black, right of=samp] {{\sf Compare}};
+
+\node (invFFT) [rectangle, rounded corners, 
+minimum width=1cm, 
+minimum height=1cm,
+text centered, 
+fill=white!70!black,
+draw=black, right of=compare] {${\sf invFFT}$};
+\coordinate (invFFT-out1) at ($(invFFT.east) + (0,0.2)$);
+\coordinate (invFFT-out2) at ($(invFFT.east) + (0,-0.2)$);
+
+\node (compress) [rectangle, rounded corners, 
+minimum width=1cm, 
+minimum height=1cm,
+text centered, 
+fill=white!70!black,
+draw=black, right of=invFFT] {{\sf Compress}};
+
+
+% Texts
+\node (m) at ($(hash-in1) + (-0.75,0)$) {{\sf m}};
+\node (r) at ($(hash-in2) + (-0.75,0)$) {{\sf r}};
+% \node (B) at ($(point-mult-in1) + (-1.5,0)$) {$\mathbf{\hat B}$};
+\node (sk) at ($(point-mult.north) + (0,1)$) {$\sf sk$};
+% \node (beta) at ($(compare.north) + (0,1)$) {$\lfloor \beta^2 \rfloor$};
+% \node (s1) at ($(invFFT.east) + (0.4,1)$) {$s_1$};
+\node (s) at ($(compress.east) + (0.75,0)$) {$\sf s$};
+
+% Lines
+\draw [arrow] (m) -- (hash-in1);
+\draw [arrow] (r) -- (hash-in2);
+\draw [arrow] (hash.east) -- node[above]{} (FFT.west);
+
+\draw [arrow] (FFT.east) -- (point-mult.west);
+\draw [arrow] (sk) -- node[left]{} (point-mult.north);
+
+\draw [arrow] (point-mult.east) -- node[above]{} (samp.west);
+\draw [arrow] (sk) -| node[above left]{} (samp.north);
+
+\draw [arrow] (samp.east) -- (compare.west);
+
+% \draw [arrow] (beta) -- (compare.north);
+
+\draw [arrow] (compare.east) -- (invFFT.west);
+
+\draw [arrow] (invFFT.east) -- (compress.west);
+% \draw [arrow] (invFFT.east) -| node[below right]{$s_2$} (s1);
+
+\draw [arrow] (compress.east) -- (s);
+
+
+\end{tikzpicture}
+
+\caption{A graphical overview of {\sf FALCON.Sign}.}
+\label{fig:falcon-sign-test}
+\end{figure}

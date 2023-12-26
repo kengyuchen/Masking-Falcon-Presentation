@@ -1,0 +1,178 @@
+\begin{frame}{SecFprAdd: Secure FprAdd}
+
+\centerline{
+\blockalgstart{.9\textwidth}{{\large FprAdd}}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{multicols}{2}
+  \small
+  \begin{algorithmic}[1]
+    \REQUIRE {\color<2>{red}FPNs $x$ and $y$}
+    \ENSURE FPN sum of $x$ and $y$
+    \STATE {\color<3-6>{red}$d \gets x^{[63:1]} - y^{[63:1]}$}
+    \STATE {\color<4-7>{red}$cs \gets d^{(64)} \vee ((1 - (-d)^{(64)}) \wedge x^{(64)}) $}
+    \STATE {\color<7>{red}$m \gets (x \oplus y) \wedge (-cs)$}
+    \STATE {\color<7>{red}$x \gets x \oplus m, y \gets y \oplus m$}
+    \STATE {\color<8>{red}Extract $(sx, ex, mx)$ and $(sy, ey, my)$ from $x, y$, respectively.}
+    \STATE {\color<8>{red}$mx \gets mx \ll 3, my \gets my \ll 3$}
+    \STATE {\color<8>{red}$ex \gets ex - 1078, ey \gets ey - 1078$}
+    \STATE {\color<8>{red}$c \gets ex - ey$}
+    \STATE {\color<9>{red}$b \gets \llbracket c < 60 \rrbracket$}
+    \STATE {\color<9>{red}$my \gets my \wedge (-b) $}
+    \STATE {\color<10>{red}$my \gets (my \gg c) \vee \llbracket my^{[c:1]} \neq 0 \rrbracket$}
+    \STATE {\color<11>{red}$s \gets sx \oplus sy$}
+    \STATE {\color<12>{red}$z \gets mx + (-1)^s my $}
+    \STATE {\color<13>{red}Normalize $z, ex$ to make the 64th bit of $z$ set}
+    \STATE {\color<14>{red}$z \gets (z \gg  9) \vee \llbracket z^{[9:1]} \neq 0 \rrbracket$}
+    \STATE {\color<14>{red}$ex \gets ex + 9$} \\
+    \RETURN {\color<15>{red}\hskip -4pt ${\sf FPR}(sx, ex, z)$}
+  \end{algorithmic}
+  \end{multicols}
+\end{algorithm}
+\vspace{-12pt}
+\blockalgend
+}
+\medskip
+
+\only<1>{
+We show how we mask the floating-point number addition algorithm FprAdd.
+}
+
+\only<2>{
+By the output of SecFprMul, we assume the input shares $(x_i)$ and $(y_i)$ are 64-bit Boolean-masked FPNs.
+}
+
+
+\only<3>{
+The subtraction of two Boolean-masked values can be operated by considering $x^{[63:1]} - y^{[63:1]} = x^{[63:1]} + (\neg y^{[63:1]}) + 1$, which takes two {\sf SecAdd}s.
+}
+
+
+\only<4>{
+But since we only need $(x^{[63:1]} - y^{[63:1]})^{(64)}$, we only compute $x^{[63:1]} + (\neg y^{[63:1]})$ and then check the boundary conditions. This saves us one {\sf SecAdd}.
+}
+
+\only<5>{
+That is, $\llbracket u - v < 0 \rrbracket = \llbracket u + (\neg v) < 0 \rrbracket \oplus \llbracket u + (\neg v) = -1 \rrbracket \oplus \llbracket u + (\neg v) = 2^{63} - 1 \rrbracket $
+}
+
+\only<6>{
+Moreover, we apply $u + (\neg v) \neq -1 \Leftrightarrow \neg (u + (\neg v)) \neq 0$
+ and
+$
+ u + (\neg v) \neq 2^{63}-1 \Leftrightarrow (u + (\neg v)) \oplus (1 \ll 63) \neq -1 \Leftrightarrow \neg( (u + (\neg v)) \oplus (1 \ll 63)) \neq 0
+$
+}
+
+\only<7>{
+Therefore, these operations can be computed by {\sf SecNonzero}, {\sf SecAnd}, and {\sf SecOr}.
+}
+
+
+\only<8>{
+Share-wise operations, two {\sf B2A}s to convert $(ex_i)$ and $(ey_i)$ to arithmetic shares, and subtractions to any shares.
+}
+
+
+\only<9>{
+Subtraction to any share of $c$ by 60 and an {\sf A2B} to get the MSB of $c$. Then apply the simple trick.
+}
+
+
+\only<10>{
+This is by our gadget {\sf SecFprUrsh}.
+}
+
+
+\only<11>{
+A Share-wise operation.
+}
+
+
+\only<12>{
+Considering the simple trick with $my + (my \oplus (-my)) \wedge -s$, where $-my = (\neg my) + 1$ is derived by an {\sf SecAdd}. Then add the result to $mx$.
+}
+
+
+\only<13>{
+This is by our gadget {\sf SecFprNorm64}.
+}
+
+
+\only<14>{
+A Share-wise operation and a {\sf SecNonzero}. Add $9$ to any share of $ex$.
+}
+
+
+\only<15>{
+Finally, it calls FPR to return a 64-bit Boolean-masked FPN.
+}
+
+
+
+\end{frame}
+
+
+\begin{frame}{SecFprAdd: Secure FprAdd}
+
+
+\centerline{
+\blockalgstart{\textwidth}{SecFprAdd}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\scriptsize}
+  \label{alg:SecFprAdd}
+  \scriptsize
+  \begin{multicols}{2}
+  \begin{algorithmic}[1]
+    \REQUIRE Boolean shares $(x_i)_{1 \leq i \leq n}$
+    \REQUIRE Boolean shares $(y_i)_{1 \leq i \leq n}$
+    \ENSURE Boolean shares for the FPN sum
+    \STATE $(xm_i) \gets (x_i^{[63:1]})$ \label{alg:SecFprAdd:swap_start}
+    \STATE $(ym_i) \gets (\neg y_1^{[63:1]}, y_2^{[63:1]}, \cdots, y_n^{[63:1]})$
+    \STATE $(d_i) \gets {\sf SecAdd}( (xm_i), (ym_i) )$ \label{alg:SecFprAdd:SecAdd_1}
+    \STATE $(b_i) \gets {\sf SecNonzero}( \neg d_1, d_2, \cdots , d_n )$ \label{alg:SecFprAdd:check_1}
+    \STATE $(b_i') \gets {\sf SecNonzero}( \neg (d_1 \oplus (1 \ll 63) ), d_2, \cdots , d_n )$ \label{alg:SecFprAdd:check_2}
+    % \STATE $(ym_i) \gets {\sf SecAdd}( (ym_i), (1, 0, \cdots, 0) )$ \label{alg:SecFprAdd:SecAdd_1}
+    % \STATE $(d_i) \gets {\sf SecAdd}( (xm_i), (ym_i) )$  \label{alg:SecFprAdd:SecAdd_2}
+    % \STATE $(b_i) \gets {\sf SecNonzero}( (d_i) )$
+    % \STATE $b_1 \gets \neg b_1$
+    \STATE $(cs_i) \gets {\sf SecAnd} ( (\neg b_1, b_2, \cdots, b_n) , (x_i^{(64)}) )$
+    \STATE $(cs_i) \gets {\sf SecOr} ( (cs_i),  (d_i^{(64)} \oplus b_i \oplus b_i')  )$
+    \STATE $(m_i) \gets {\sf SecAnd}( (x_i \oplus y_i), (-cs_i) )$
+    \STATE $(x_i) \gets (x_i \oplus m_i),\; (y_i) \gets (y_i \oplus m_i)$ \label{alg:SecFprAdd:swap_end}
+    \STATE Extract $(sx_i), (ex_i), (mx_i)$ and $(sy_i), (ey_i), (my_i)$ from $(x_i)$ and $(y_i)$, respectively.
+    \STATE $(mx_i) \gets (mx_i \ll 3),\; (my_i) \gets (my_i \ll 3)$
+    \STATE $(ex_i) \gets {\sf B2A}( (ex_i) ),\; (ey_i) \gets {\sf B2A}( (ey_i) )$  \label{alg:SecFprAdd:B2A}
+    \STATE $ex_1 \gets ex_1 - 1078,\; ey_1 \gets ey_1 - 1078$.
+    \STATE $(c_i) \gets (ex_i - ey_i)$
+    \STATE $(c_i') \gets {\sf A2B}( (c_1 - 60, c_2,  \cdots, c_n) )$ \label{alg:SecFprAdd:A2B} \label{alg:SecFprAdd:large_exp_start}
+    \STATE $(my_i) \gets {\sf SecAnd}( (my_i), (-(c_i'^{(16)}))  )$ \label{alg:SecFprAdd:large_exp_end}
+    \STATE $(my_i) \gets {\sf SecFprUrsh}( (my_i), (c_i^{[6:1]}) )$
+    \STATE $(my'_i) \gets (\neg my_1, my_2, \cdots, my_n)$
+    \STATE $(my'_i) \gets {\sf SecAdd}( (my'_i), (1, 0, \cdots, 0) )$ 
+    \STATE $(s_i) \gets (-(sx_i \oplus sy_i))$ \label{alg:SecFprAdd:sign_xor}
+    \STATE $(my_i) \gets {\sf Refresh}((my_i))$
+    \STATE $(my'_i) \gets {\sf SecAnd}(  (my_i \oplus my'_i), (s_i) )$
+    \STATE $(my_i) \gets (my_i \oplus my'_i)$ 
+    \STATE $(z_i) \gets {\sf SecAdd}( (mx_i),  (my_i) )$  \label{alg:SecFprAdd:SecAdd_3}
+    \STATE $(z_i), (ex_i) \gets {\sf SecFprNorm64}( (z_i), (ex_i) )$
+    % \STATE $(b_i) \gets {\sf SecNonzero} ( (z_i^{[9:1]}) )$
+    \STATE $(b_i) \gets {\sf SecNonzero} ( (z_i^{[10:1]}) )$
+    \STATE $(z_i) \gets (z_i \gg 9)$ \label{alg:SecFprAdd:shift_9}
+    % \STATE $(z_i) \gets {\sf SecOr} ( (z_i),  (b_i) )$ 
+    \STATE $(z_i^{(1)}) \gets (b_i) $ 
+    \STATE $ex_1 \gets ex_1 + 9$
+    \STATE \Return ${\sf SecFPR} ( {\sf Refresh}((sx_i)), (ex_i), (z_i) )$
+
+  \end{algorithmic}
+  \end{multicols}
+\vspace{-10pt}
+\end{algorithm}
+
+\blockalgend
+}
+\medskip
+
+
+
+\end{frame}

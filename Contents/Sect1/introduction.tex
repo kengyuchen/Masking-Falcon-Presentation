@@ -1,0 +1,110 @@
+\begin{frame}{Introduction}
+
+\begin{itemize}
+    \item To defend the potential threat from large-scale quantum computers, the US National Institute of Standards and Technology (NIST) initiated standardization process for post-quantum cryptography in 2016.
+    \pause
+    \item In 2022, four selected algorithms – CRYSTALS-Kyber, CRYSTALS-Dilithium, \textsc{Falcon}, and SPHINCS+ were expected to be part of NIST's post-quantum cryptographic standards.
+\end{itemize}
+    
+\end{frame}
+
+
+\begin{frame}{Theoretical Security - Hardness of Mathematical Problems}
+
+In theory, these algorithms can base their security on some problems that are considered still hard given the advantage of quantum computing.
+
+\begin{enumerate}
+    \item CRYSTALS-Kyber: Module Learning With Errors (MLWE)
+    \item CRYSTALS-Dilithium: Module Short Integer Solution (MSIS)
+    \item \textsc{Falcon}: NTRU Problem and SIS on NTRU lattices
+    \item SPHINCS+: Security of the used hash function families
+\end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}{Real-World Security – Side-Channel Attacks}
+
+In practice, the implementations of these algorithms can suffer side-channel attacks. Fortunately, there are countermeasures for them.
+
+\begin{enumerate}
+    \item CRYSTALS-Kyber: \cite{TCHES:BGRSv21, TCHES:FBRKSVS22, EPRINT:HKLPSS22}
+    \item CRYSTALS-Dilithium: \cite{ACNS:MGTF19}
+    \item {\color<2>{red} \textsc{Falcon}: \cite{PQCRYPTO:HPRR20, TCHES:GMRR22, EC:ZLYW23} }
+    \item SPHINCS+: \cite{bertoni2010building,IEEE:7223170}
+\end{enumerate}
+\pause
+\medskip
+
+Unfortunately, there are attacks on \textsc{Falcon} that have not been addressed.
+
+\end{frame}
+
+
+\begin{frame}{Attacks on \textsc{Falcon}}
+
+%\begin{figure}
+%    \centering
+%    \includegraphics[width=\textwidth]{tikz/falcon-sign.png}
+%    \caption{A graphical overview of {\sf FALCON.Sign}}
+%    \label{fig:enter-label}
+%\end{figure}
+
+\input{tikz/falcon-sign}
+
+\begin{center}
+{\small
+\begin{tabular}{ l | c | c }
+ & Attack & Countermeasure \\
+\hline
+\makecell{{\color{red}Pre-image Vector Computation}} & \cite{KA21, TCHES:GMRR22} & \textcolor<2>{red}{None} \\
+\hline
+\makecell{{\textcolor{black!30!green}{Gaussian Sampler over Lattices}}} & \cite{TCHES:GMRR22, EC:ZLYW23} & \cite{TCHES:GMRR22, EC:ZLYW23} \\ 
+\end{tabular}
+}
+\end{center}
+    
+\end{frame}
+
+
+\begin{frame}{Our Contributions}
+
+In this paper, we present the following contributions:
+\pause
+\begin{itemize}
+    \item We propose the first masking scheme on the floating-point number multiplication and addition in the pre-image vector computation of \textsc{Falcon} as a countermeasure.
+    \pause
+    \item We verify the high-order security of our design in the probing model.
+    \pause
+    \item To test the practical leakage of our work, we conduct the Test Vector Leakage Assessment (TVLA) \cite{gilbert2011testing} experiments.
+    \pause
+    \item We also test the performance by comparing with the reference implementation of \textsc{Falcon} \cite{NISTPQC-R3:FALCON20}.
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}{Notation}
+
+Throughout the presentation, we assume
+\pause
+\begin{itemize}
+%    \item $M > N$ are two positive integers and $N = 2^\kappa$ for some integer $\kappa$.
+%    \pause
+%    \item $\phi = x^N + 1$ is a polynomial.
+%    \pause
+%    \item $q$ is a prime number.
+%    \pause
+%    \item Represent a vector $\mathbf{v}$ by a boldface letter, and a matrix $\mathbf{A}$ by a boldface capital letter.
+%    \item For a polynomial $f \in \Z[x] / \phi$, it can be considered as an $N$-by-$N$ matrix.
+    \item For a variable $x$, the $j$th bit of $x$ is written as $x^{(j)}$.
+    \pause
+    \item The $i$th bit to $j$th bit ($j \geq i$) of $x$ is represented by $x^{[j:i]}$.
+    \pause
+    \item A sequence of $n$ variables $(x_1, x_2, \cdots, x_n)$ (e.g. shares of variable $x$) is written as $(x_i)_{1 \leq i \leq n}$, or simply $(x_i)$.
+    \pause
+    \item For a proposition $P$, $\llbracket P \rrbracket = 1$ if and only if $P$ is true and $0$ if otherwise.
+\end{itemize}
+    
+\end{frame}

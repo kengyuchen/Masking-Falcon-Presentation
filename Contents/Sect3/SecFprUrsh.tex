@@ -1,0 +1,123 @@
+\begin{frame}{SecFprUrsh}
+
+Given 64-bit shares $(x_i)$ and 6-bit $(c_i)$, we need to derive shares $(z_i)$ such that
+\[
+\bigoplus_{i=1}^n z_i = \left( \left( \bigoplus_{i=1}^n x_i \right) \gg \left( \sum_{i=1}^n c_i \bmod 2^{6} \right) \right) \vee \left \llbracket \bigoplus_{i=1}^n x_i^{[c:1]} \neq 0 \right \rrbracket
+\]
+\pause
+We observe that
+\pause
+\begin{itemize}
+
+\item Right-shifting and right-rotating by a value $c$ only differ by the most $c$ significant bits.
+\pause
+\item Both shifting and rotating can be operated share-wise.
+\pause
+\item Right-rotating $x$ by a value $c$ is equal to right-rotating $x$ by a value $c \bmod 64$.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{SecFprUrsh}
+
+Hence, our idea is to right-rotate all $(x_i)$ by $c_1, c_2, \cdots, c_n$ sequentially.
+\pause
+\medskip
+
+Some high bits are redundant, so we use an index $m = (1 \ll 63)$ to indicate the first meaningful bit of the result.
+\pause
+To clear the redundant high bits, consider
+\[
+m' := m \gg c = (\underbrace{0, \cdots, 0}_{c \text{ bits}}, 1, 0, \cdots, 0)
+\]
+\pause
+\[
+m'' := m' \oplus (m' \gg 1) \oplus \cdots \oplus (m' \gg 63) = (\underbrace{0, \cdots, 0}_{c \text{ bits}}, 1, 1, \cdots, 1)
+\]
+\pause
+By an AND operation with $m''$, we can clear useless bits. Moreover, these redundant bits actually form the sticky bit.
+
+\end{frame}
+
+
+\begin{frame}{SecFprUrsh}
+
+\centerline{
+\blockalgstart{.9\textwidth}{{\large SecFprUrsh}}
+\begin{algorithm}[H]
+  \label{alg:SecFprUrsh}
+  \algsetup{linenosize=\small}
+  \small
+  \begin{multicols}{2}
+  \begin{algorithmic}[1]
+    \REQUIRE 64-bit Boolean shares ${(x_i)_{1\leq i \leq n}}$
+    \REQUIRE 6-bit arithmetic shares ${(c_i)_{1\leq i \leq n}}$
+    \ENSURE Boolean shares ${(z_i)_{1\leq i \leq n}}$ for value $z = x \gg c$ with the sticky bit preserved
+    \STATE ${(m_i)_{1\leq i \leq n}} \gets ((1 \ll 63), 0, \cdots, 0)$
+    \FOR{$j = 1$ to $n$}
+        \STATE Right-rotate $(x_i)$ by $c_j$
+        \STATE $(x_i) \gets {\sf RefreshMasks}((x_i))$
+        \STATE Right-rotate $(m_i)$ by $c_j$
+        \STATE $(m_i) \gets {\sf RefreshMasks}((m_i))$
+    \ENDFOR
+    \STATE ${\sf len} \gets 1$
+    \WHILE{${\sf len} \leq 32$}
+        \STATE $(m_i) \gets (m_i \oplus (m_i \gg {\sf len}))$
+        \STATE ${\sf len} \gets {\sf len} \ll 1 $
+    \ENDWHILE
+    \STATE $(y_i) \gets {\sf SecAnd}( (x_i), (m_i) )$
+    \STATE $(z_i) \gets (y_i \oplus x_i \oplus y_i^{(1)})$
+    \STATE $(b_i) \gets {\sf SecNonzero}( (z_i) )$
+    \STATE $(z_i) \gets  (y_i^{[64:2]} \vee b_i) $
+    \STATE \Return $(z_i)$
+\end{algorithmic}
+\end{multicols}
+\end{algorithm}
+\vspace{-10pt}
+\blockalgend
+}
+
+\end{frame}
+
+
+\iffalse
+
+\begin{frame}{SecFprUrsh in Masking FprAdd}
+
+\centerline{
+\blockalgstart{.8\textwidth}{{\large FprAdd}}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{multicols}{2}
+  \small
+  \begin{algorithmic}[1]
+    \REQUIRE FPNs $x$ and $y$
+    \ENSURE FPN sum of $x$ and $y$
+    \STATE $d \gets x^{[63:1]} - y^{[63:1]}$
+    \STATE $cs \gets d^{(64)} \vee ((1 - (-d)^{(64)}) \wedge x^{(64)}) $
+    \STATE $m \gets (x \oplus y) \wedge (-cs)$
+    \STATE $x \gets x \oplus m, y \gets y \oplus m$
+    \STATE Extract $(sx, ex, mx)$ and $(sy, ey, my)$ from $x, y$, respectively.
+    \STATE $mx \gets mx \ll 3, my \gets my \ll 3$
+    \STATE $ex \gets ex - 1078, ey \gets ey - 1078$
+    \STATE $c \gets ex - ey$
+    \STATE $b \gets \llbracket c < 60 \rrbracket$ 
+    \STATE $my \gets my \wedge (-b) $ 
+    \STATE \textcolor{red}{$my \gets (my \gg c) \vee \llbracket my^{[c:1]} \neq 0 \rrbracket$}
+    \STATE $s \gets sx \oplus sy$
+    \STATE $z \gets mx + (-1)^s my $
+    \STATE Normalize $z, ex$ to make the 64th bit of $z$ set
+    \STATE $z \gets (z \gg  9) \vee \llbracket z^{[9:1]} \neq 0 \rrbracket$
+    \STATE $ex \gets ex + 9$ \\
+    \RETURN \hskip -4pt ${\sf FPR}(sx, ex, z)$
+  \end{algorithmic}
+  \end{multicols}
+\end{algorithm}
+\vspace{-10pt}
+\blockalgend
+}
+
+\end{frame}
+
+\fi

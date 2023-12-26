@@ -1,0 +1,139 @@
+\begin{frame}{Overview of Our Approach}
+
+We now show how we mask {\sf FPR}, {\sf FprMul}, and {\sf FprAdd}.
+\pause
+
+An intuitive approach to mask any algorithm:
+\pause
+
+\begin{itemize}
+\item For operations like $\wedge, \oplus$: Boolean masking
+\pause
+\item For operations like $+, \times$: arithmetic masking
+\end{itemize}
+\pause
+and use the following gadgets if necessary:
+\pause
+\begin{itemize}
+	\item {\sf A2B}: $(x_i)_{1\leq i \leq n} \mapsto (y_i)_{1\leq i \leq n}$ such that $\sum_{i=1}^n x_i = \bigoplus_{i=1}^n y_i$
+	\pause
+	\item {\sf B2A}: $(y_i)_{1\leq i \leq n} \mapsto (x_i)_{1\leq i \leq n}$ such that $\bigoplus_{i=1}^n y_i = \sum_{i=1}^n x_i$
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Overview of Our Approach}
+
+However, some operations in floating-point number arithmetic cannot be easily implemented in this way:
+\pause
+\begin{itemize}
+	\item Checking whether a secret value is nonzero
+	\begin{itemize}
+		\item Given $(x_i)$, checking whether $\bigoplus_{i=1}^n x_i \neq 0$ or $\sum_{i=1}^n x_i \neq 0$
+	\end{itemize}
+	\pause
+	\item Right-shifting a secret value by another secret value
+	\begin{itemize}
+		\item Given $(x_i)$ and $(c_i)$, right-shifting $(x_i)$ by $(c_i)$
+	\end{itemize}
+	\pause
+	\item Normalizing a secret value to $[2^{63},2^{64})$
+	\begin{itemize}
+		\item Given $(x_i)$, left-shifting $(x_i)$ until its 64th bit is set
+	\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\iffalse
+%
+%
+%
+\begin{frame}{Overview of Our Approach}
+
+%\only<2>{Checking whether a secret value is nonzero:}
+%\only<3>{Right-shifting a secret value by another secret value:}
+%\only<4>{Normalizing a secret value to $[2^{54},2^{55})$:}
+%\medskip
+Let's see where these operations are:
+\begin{itemize}
+	\item \alt<2>{\textcolor{red}{Checking whether a secret value is nonzero}} {Checking whether a secret value is nonzero}
+	\item \alt<3>{\textcolor{red}{Right-shifting a secret value by another secret value}}{ Right-shifting a secret value by another secret value }
+	\item \alt<4>{\textcolor{red}{Normalizing a secret value to $[2^{63},2^{64})$}}{Normalizing a secret value to $[2^{63},2^{64})$}
+\end{itemize}
+
+
+\begin{columns}[T]
+\column{0.5\textwidth}
+FprMul:
+\begin{enumerate}
+    \item {\color<2->{trans}{Sign bit XOR}}
+    \item {\color<2->{trans}{Exponent Addition}}
+    \item {\color<2->{trans}{Mantissa Multiplication}}
+    \item \alt<1,3->{ {\color<3->{trans} Right-shifting the mantissa to $[2^{54}, 2^{55})$} }{ {\color{red}Right-shifting the mantissa to $[2^{54}, 2^{55})$} }
+    \item \alt<1,3->{ {\color<3->{trans}Combining the results and rounding (FPR)} }{\color{red}Combining the results and rounding (FPR)}
+\end{enumerate}
+
+\column{0.5\textwidth}
+FprAdd:
+\begin{enumerate}
+    \item {\color<2->{trans} Making the first operand $\geq$ the second}
+    \item \alt<1,4->{ {\color<4->{trans} Right-shifting the second operand} }{ {\color{red} Right-shifting the second operand} }
+    \item { \color<2->{trans}{Mantissa Addition / Subtraction} }
+    \item \alt<1,3>{ {\color<3>{trans} Normalizing the sum to $[2^{54}, 2^{55})$} }{ {\color{red}Normalizing the sum to $[2^{54}, 2^{55})$} }
+    \item \alt<1,3->{\color<3->{trans}Combining the results and rounding (FPR) }{\color{red}Combining the results and rounding (FPR)}
+\end{enumerate}
+
+\end{columns}
+\medskip
+
+
+\end{frame}
+%
+%
+%
+\fi
+
+
+
+\begin{frame}{Overview of Our Approach}
+
+We design novel gadgets for these three operations, including:
+\pause
+\begin{itemize}
+	\item {\sf SecNonzero} (Algorithm \ref{alg:SecNonzero}): securely checking whether a secret value is nonzero.
+	\pause
+	\item {\sf SecFprUrsh} (Algorithm \ref{alg:SecFprUrsh}): securely right-shifting a secret value by another secret value
+	\pause
+	\item {\sf SecFprNorm64} (Algorithm \ref{alg:SecFprNorm64}): securely normalizing a secret value to $[2^{63}, 2^{64})$
+\end{itemize}
+\pause
+In addition, we make several improvements to reduce the cost.
+
+\end{frame}
+
+
+\begin{frame}{Gadgets Used in Our Work}
+
+\begin{table}
+\centering
+\begin{tabular}{ l l c} 
+\toprule
+\textbf{Algorithm} & \textbf{Description} & \textbf{Reference} \\
+\midrule
+\textcolor<2>{red}{{\sf SecAnd}} & \textcolor<2>{red}{AND of Boolean shares} & \textcolor<2>{red}{\cite{C:IshSahWag03, CCS:BBDFGS16}} \\
+{\sf SecMult} & Multiplication of arithmetic shares & \cite{C:IshSahWag03, CCS:BBDFGS16} \\
+{\sf SecAdd} & Addition of Boolean shares & \cite{FSE:CGTV15, EC:BBEFGR18} \\
+{\sf A2B} & Arithmetic to Boolean conversion & \cite{PKC:SPOG19} \\
+{\sf B2A} & Boolean to arithmetic conversion & \cite{TCHES:BetCorZei18} \\
+${\sf B2A_{Bit}}$ & One-bit {\sf B2A} conversion & \cite{PKC:SPOG19} \\
+{\sf RefreshMasks} & $t$-NI refresh of masks & \cite{CCS:BBDFGS16, TCHES:BetCorZei18} \\
+{\sf Refresh} & $t$-SNI refresh of masks & \cite{CCS:BBDFGS16} \\
+\bottomrule
+\end{tabular}
+\caption{List of used gadgets in our work}
+\label{table:gadgets}
+\end{table}
+
+\end{frame}

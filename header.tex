@@ -1,0 +1,144 @@
+% \documentclass[xcolor=dvipsnames{beamer}
+\documentclass[xcolor=dvipsnames,aspectratio=169]{beamer}
+%\documentclass[handout,xcolor=dvipsnames,aspectratio=169]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage{CJKutf8}
+
+% Include Packages
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=,
+    citecolor=blue
+}
+\usepackage{mathrsfs}
+\usepackage{xcolor}
+\usepackage{amsthm,amsmath,amssymb}
+\usepackage{stmaryrd}
+\usepackage{bm}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subfigure}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{makecell}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{transparent}
+\definecolor{trans}{gray}{0.6}
+
+\newcommand{\backupbegin}{
+   \newcounter{framenumberappendix}
+   \setcounter{framenumberappendix}{\value{framenumber}}
+}
+\newcommand{\backupend}{
+   \addtocounter{framenumberappendix}{-\value{framenumber}}
+   \addtocounter{framenumber}{\value{framenumberappendix}} 
+}
+
+% \usepackage{algorithm}
+% \usepackage{algpseudocode}
+\usepackage[noend]{algorithmic,algorithm2e}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+\newcommand{\blockalgstart}[2]{
+    \begin{minipage}{#1}
+    \begin{block}{#2}
+    \vskip -8pt
+}
+\newcommand{\blockalgend}{
+    \end{block}
+    \end{minipage}
+}
+
+
+
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+\usetikzlibrary{positioning}
+\usetikzlibrary{calc}
+\usetikzlibrary{backgrounds}
+
+\tikzstyle{arrow} = [thick,-latex']
+
+
+
+\usetheme{CambridgeUS}
+
+% Set Custom Color
+
+\newcommand{\maincolor}{ForestGreen}
+
+\setbeamercolor{palette primary}{fg=black, bg=gray!30!white}
+\setbeamercolor{palette secondary}{fg=black, bg=gray!20!white}
+\setbeamercolor{palette tertiary}{fg=black, bg=\maincolor!50!white}
+
+\setbeamercolor{title}{fg=\maincolor!60!black}
+\setbeamercolor{frametitle}{parent=title}
+\setbeamercolor{block title}{parent=title}
+\setbeamercolor{caption name}{parent=title}
+
+\setbeamercolor{item projected}{bg=\maincolor}
+
+%%begin novalidate
+\newenvironment<>{proposition}[1]{%
+  \setbeamercolor{block title}{fg=white,bg=\maincolor}%
+  \begin{block}#2{#1}}{\end{block}}
+\newenvironment<>{definition}[1]{%
+  \setbeamercolor{block title}{fg=white,bg=\maincolor}%
+  \begin{block}#2{#1}}{\end{block}}
+%%end novalidate
+\colorlet{separation rule}{white}
+
+\makeatletter
+\pgfdeclareverticalshading[lower.bg,upper.bg]{bmb@transition}{200cm}{%
+    color(0pt)=(separation rule); color(2pt)=(separation rule); color(4pt)=(separation rule)}
+\makeatother
+
+
+% Set self-defined words
+
+\DeclareMathOperator*{\argmax}{arg\!\max}
+\DeclareMathOperator*{\argmin}{arg\!\min}
+
+\newcommand{\negl}{\mathsf{negl}}
+\newcommand{\poly}{\mathsf{poly}}
+\newcommand{\Adv}{\mathbf{Adv}}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+
+
+% Title page configuration
+\title[Masking Falcon's FPU]{Masking Floating-Point Number Multiplication and Addition of Falcon}
+\author[Keng-Yu Chen]{
+Keng-Yu Chen
+}
+\institute[]{{\small Advisor: Jiun-Peng Chen, Ho-Lin Chen}}
+\date{December 29th, 2023}
+
+%------------------------------------------------------------
+
+\setbeamertemplate{navigation symbols}{}
+
+\AtBeginSection[] % Do nothing for \section*
+{
+\begin{frame}<beamer>
+\frametitle{Table of Contents}
+\tableofcontents[currentsection,hideothersubsections ]
+\end{frame}
+}
+
+\AtBeginSubsection[] % Do nothing for \subsection*
+{
+\begin{frame}<beamer>
+\frametitle{Table of Contents}
+\tableofcontents[currentsection, subsectionstyle=show/shaded/hide]
+\end{frame}
+}

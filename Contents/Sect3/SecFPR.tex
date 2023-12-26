@@ -1,0 +1,145 @@
+\begin{frame}{SecFPR: Secure FPR}
+
+\begin{columns}[T]
+\column{.6\textwidth}
+\begin{block}{{\large FPR}}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{algorithmic}[1]
+    \REQUIRE \textcolor<2>{red}{ Sign bit $s$, exponent $e$, and 55-bit mantissa $z$}
+    \ENSURE FPN $x$ packed by $s, e, z$
+    \STATE \textcolor<3>{red}{$e \gets e + 1076$}
+
+    \STATE \textcolor<4>{red}{$b \gets \llbracket e < 0 \rrbracket$}
+
+    \STATE \textcolor<4>{red}{$z \gets z \wedge (b-1)$}
+   
+    \STATE \textcolor<5>{red}{$b \gets \llbracket z \neq 0 \rrbracket $}
+
+    \STATE \textcolor<6>{red}{ $e \gets e \wedge (-b)$ }
+
+    \STATE \textcolor<6>{red}{ $x \gets ((s \ll 63) \vee (z \gg 2)) + e \ll 52$}
+
+    \STATE \textcolor<7>{red}{$f \gets {\tt0XC8} \gg z^{[3:1]} $ }
+
+    \STATE \textcolor<7>{red}{$x \gets x + f^{(1)}$} \\ 
+    \RETURN \hskip -12pt \textcolor<8>{red}{$x$}
+  \end{algorithmic}
+\end{algorithm}
+\end{block}
+
+\column{.35\textwidth}
+
+
+\only<1>{
+\vskip 70pt
+We now show how we mask the floating-point number rounding and packing algorithm {\sf FPR}.
+}
+
+
+\only<2>{
+\vskip 50pt
+Recall that {\sf FPR} is the last subroutine of {\sf FprMul} and {\sf FprAdd}.
+
+By our masking design of {\sf FprMul} and {\sf FprAdd}, $(s_i)$ is Boolean-masked, $(e_i)$ is 16-bit arithmetic-masked, and $(z_i)$ is Boolean-masked.
+}
+
+
+\only<3>{
+\vskip 70pt
+This is by adding to any one share.
+}
+
+
+\only<4>{
+\vskip 50pt
+This is equivalent to
+\centerline{
+\blockalgstart{.6\textwidth}{}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{algorithmic}[1]
+    \IF{$e < 0$}
+        \STATE $z \gets 0$
+    \ENDIF
+\end{algorithmic}
+\end{algorithm}
+\blockalgend
+}
+
+\medskip
+and is done by an ${\sf A2B}$, taking the MSB, and the simple trick.
+}
+
+
+\only<5>{
+\vskip 70pt
+This is done by {\sf SecNonzero} and the simple trick.
+}
+
+
+\only<6>{
+\vskip 50pt
+Shift, OR, and a {\sf SecAdd}.
+
+We add $(e_i)$ and the $55$th bit of $(z_i)$ in advance instead of adding $(e_i)$ to a 64-bit value. That is, use a 16-bit {\sf SecAdd} to save a 64-bit {\sf SecAdd} 
+}
+
+
+\only<7>{
+\vskip 50pt
+If the least 3 bits of $(z_i)$ are 011, 110, and 111, $f^{(1)} = 1$.
+
+We OR $(z^{(1)}_i)$ and $(z^{(3)}_i)$ by {\sf SecOr}, and then AND $(z^{(2)}_i)$ by {\sf SecAnd}. The result is then added to $(x_i)$ by {\sf SecAdd}.
+}
+
+
+\only<8>{
+\vskip 70pt
+Done.
+
+The returned value is a 64-bit Boolean-masked $(x_i)$.
+}
+
+\end{columns}
+
+\end{frame}
+
+
+
+\begin{frame}{SecFPR: Secure FPR}
+
+\centerline{
+\blockalgstart{\textwidth}{{\large SecFPR}}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \label{alg:SecFPR}
+  \begin{multicols}{2}
+  \begin{algorithmic}[1]
+    \REQUIRE 1-bit Boolean shares ${(s_i)_{1\leq i \leq n}}$
+	\REQUIRE 16-bit arithmetic shares ${(e_i)_{1\leq i \leq n}}$
+	\REQUIRE 55-bit Boolean shares ${(z_i)_{1\leq i \leq n}}$
+    \ENSURE Boolean shares ${(x_i)_{1\leq i \leq n}}$
+    \STATE $e_1 \gets e_1 + 1076$
+    \STATE $(e_i) \gets {\sf A2B}( (e_i) )$ \label{alg:SecFPR:A2B}
+    \STATE $(b_i) \gets (-e_i^{(16)})$
+    \STATE $(z_i) \gets {\sf SecAnd}( (z_i), {(\neg b_1, b_2, \cdots, b_n)} )$\label{alg:SecFPR:comp}
+    % \STATE $(b_i) \gets ( -z_i^{(55)} )$
+    \STATE $(e_i) \gets {\sf SecAnd}( (e_i), {(-z_i^{(55)})} )$\label{alg:SecFPR:zero}
+    \STATE $(e_i) \gets {\sf SecAdd}( (e_i), (z_i^{(55)}) )$ \label{alg:SecFPR:SecAdd_1}
+    \STATE $(e_i) \gets {\sf Refresh}((e_i))$
+    \STATE $(s_i) \gets {\sf Refresh}((s_i))$
+    \STATE $(x_i) \gets ((s_i^{(1)} \ll 63) \vee (e_i^{[11:1]} \ll 52 ) \; \vee (z_i^{[54:3]})$ \label{alg:SecFPR:pack}
+    \STATE $(f_i) \gets {\sf SecOr}( {\sf Refresh}(z_i^{(1)}) , (z_i^{(3)}))$ \label{alg:SecFPR:OR}
+    \STATE $(f_i) \gets {\sf SecAnd}((f_i) , (z_i^{(2)}))$ \label{alg:SecFPR:AND}
+    \STATE $(x_i) \gets {\sf SecAdd}( (x_i), (f_i) )$ \label{alg:SecFPR:SecAdd_2}
+    \STATE \Return $(x_i)$
+  \end{algorithmic}
+  \end{multicols}
+   \vskip -10pt
+\end{algorithm}
+\blockalgend
+}
+
+
+\end{frame}

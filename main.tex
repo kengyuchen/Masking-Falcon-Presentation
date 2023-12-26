@@ -1,0 +1,119 @@
+\input{header.tex}
+
+% Reference
+\usepackage[
+    backend=biber,
+    style=alphabetic,
+    sorting=ynt
+]{biblatex}
+\addbibresource{abbrev3.bib}
+\addbibresource{reference.bib}
+\renewcommand*{\bibfont}{\scriptsize}
+
+%------------------------------------------------------------
+
+\begin{document}
+
+
+%\frame{\titlepage}
+\begin{frame}
+\maketitle
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Table of Contents}
+\tableofcontents[hideothersubsections]
+
+\end{frame}
+
+
+\section{Introduction}
+
+\input{Contents/Sect1/introduction}
+
+
+\section{Preliminaries}
+
+\subsection{\textsc{Falcon}}
+\input{Contents/Sect2/falcon}
+
+\subsection{Floating-Point Number Arithmetic}
+\input{Contents/Sect2/fpu}
+
+\subsection{Power Analysis and Masking}
+\input{Contents/Sect2/masking}
+%\input{Contents/Sect2/tvla}
+
+\section{Masked Floating-Point Number Multiplication and Addition}
+\subsection{Overview of Our Approach}
+\input{Contents/Sect3/gadgets}
+
+\subsection{SecNonzero}
+\input{Contents/Sect3/SecNonzero}
+
+\subsection{SecFprUrsh}
+\input{Contents/Sect3/SecFprUrsh}
+
+\subsection{SecFprNorm64}
+\input{Contents/Sect3/SecFprNorm64}
+
+\subsection*{Wrapping-up}
+\input{Contents/Sect3/wrapup}
+%\input{Contents/Sect3/SecFPR}
+%\input{Contents/Sect3/SecFprMul}
+
+
+
+\section{Evaluation and Implementation}
+
+\subsection{Security}
+\input{Contents/Sect4/security}
+
+\subsection{Performance}
+\input{Contents/Sect4/performance}
+
+
+
+\section{Conclusion}
+
+\input{Contents/Sect5/conclusion}
+
+
+\section*{Reference}
+
+\begin{frame}[allowframebreaks]{Reference}
+
+% \nocite{*}
+
+\printbibliography[title=Reference]
+
+\end{frame}
+
+%\section{Appendix}
+\appendix
+\backupbegin
+
+\section{Appendix - Algorithms of Floating-Point Number Arithmetic}
+\label{sec:appendix-fpu}
+\input{Contents/Appendix/fpu}
+
+\section{Appendix – Details of Our Design}
+\label{sec:appendix}
+
+\subsection{Simple Tricks}
+\input{Contents/Sect3/tricks}
+
+\subsection{SecFPR: Secure FPR}
+\input{Contents/Sect3/SecFPR}
+
+\subsection{SecFprMul: Secure FprMul}
+\input{Contents/Sect3/SecFprMul}
+
+\subsection{SecFprAdd: Secure FprAdd}
+\input{Contents/Sect3/SecFprAdd}
+
+\backupend
+
+\end{document}

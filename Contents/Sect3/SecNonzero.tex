@@ -1,0 +1,200 @@
+\begin{frame}{SecNonzero}
+
+We need a gadget that, given shares $(x_i)$, can derive one-bit shares $(b_i)$  such that
+\[
+\left \llbracket \bigoplus_{i=1}^n x_i \neq 0 \right\rrbracket = \bigoplus_{i=1}^n b_i \quad \text{or} \quad \textcolor<2->{trans}{\left \llbracket \sum_{i=1}^n x_i \neq 0 \right\rrbracket = \bigoplus_{i=1}^n b_i}
+\]
+\pause
+For Boolean shares, our method is by considering OR-ing all the bits.
+\[
+ x = 0  \Longleftrightarrow x^{(k)} \vee x^{(k-1)} \vee \cdots \vee x^{(1)} = 0
+\]
+\pause
+Now we turn to a gadget for secure OR operations.
+    
+\end{frame}
+
+
+\begin{frame}{SecOr: OR of Boolean Shares}
+
+\centerline{
+\blockalgstart{.6\textwidth}{{\large SecOr}}
+\begin{algorithm}[H]
+  \label{alg:SecOr}
+  \algsetup{linenosize=\small}
+  \begin{algorithmic}[1]
+    \REQUIRE Boolean shares $(x_i)_{1\leq i \leq n}$ for value $x$
+    \REQUIRE Boolean shares ${(y_i)_{1 \leq i \leq n}}$ for value $y$
+    \ENSURE Boolean shares ${(z_i)_{1 \leq i \leq n}}$ for value $z = x \vee y$
+    \STATE ${(t_i)_{1\leq i \leq n} \gets  (\neg x_1, x_2, \cdots, x_n)}$
+    \STATE ${(s_i)_{1\leq i \leq n} \gets  (\neg y_1, y_2, \cdots, y_n)}$
+    \STATE $(z_i) \gets {\sf SecAnd} ( (s_i), (t_i) ) $
+    \STATE $z_1 \gets \neg z_1$
+    \STATE \Return $( z_i )$  \end{algorithmic}
+\end{algorithm}
+\vspace{-5pt}
+\blockalgend
+}
+\medskip
+It applies De Morgan's law and calls the AND algorithm ${\sf SecAnd}$ of shares as a subroutine.
+\[
+x \vee y = \neg \left[ (\neg x) \wedge (\neg y) \right]
+\]
+
+\end{frame}
+
+
+\begin{frame}{SecNonzero}
+
+For arithmetic shares, instead of applying an $n$-shared {A2B}, we consider that
+\[
+\sum_{i=1}^{n} x_i = 0  \Longleftrightarrow  \sum_{i=1}^{\frac{n}{2}} x_i = \sum_{i=\frac{n}{2}+1}^{n} (-x_i) \Longleftrightarrow \sum_{i=1}^{\frac{n}{2}} x_i \oplus \sum_{i=\frac{n}{2}+1}^{n} (-x_i) = 0
+\]
+\pause
+So we apply two $n/2$-shared {\sf A2B}s to the first $n/2$ shares and negative of the second $n/2$ shares and use the same idea.
+\pause
+\medskip
+
+In this way, we replace one $n$-shared {A2B} with two $n/2$-shared {\sf A2B}s, which is usually more efficient.
+    
+\end{frame}
+
+
+\begin{frame}{SecNonzero}
+
+\centerline{
+\blockalgstart{.7\textwidth}{{\large SecNonzero}}
+\begin{algorithm}[H]
+  \label{alg:SecNonzero}
+  \algsetup{linenosize=\small}
+  \small
+  \begin{algorithmic}[1]
+    \REQUIRE Shares ${(x_i)_{1\leq i \leq n}}$ for value $x$, ${\sf bitsize}$
+    \ENSURE One-bit Boolean shares ${ (b_i)_{1\leq i \leq n}}$ where $\bigoplus_i b_i = 0 \Leftrightarrow x = 0$
+    \IF{input $(x_i)$ are arithmetic shares}
+        \STATE $(t_i)_{1\leq i \leq \frac{n}{2}} \gets {\sf A2B}( (x_i)_{1\leq i \leq \frac{n}{2}} )$
+        \STATE $(t_i)_{\frac{n}{2}+1 \leq i \leq n} \gets {\sf A2B}( (-x_i)_{\frac{n}{2}+1 \leq i \leq n} )$
+    \ELSE
+        \STATE $(t_i)_{1\leq i \leq n} \gets (x_i)_{1\leq i \leq n}$
+    \ENDIF
+    \STATE ${\sf len} \gets {\sf bitsize} / 2$
+    \WHILE{${\sf len} \geq 1$}
+        \STATE $(l_i) \gets {\sf Refresh}( (t_i^{[2 {\sf len}: {\sf len}]}), {\sf len})$
+        \STATE $(r_i) \gets (t_i^{[{\sf len}:1]})$
+        \STATE $(t_i) \gets {\sf SecOr}((l_i), (r_i))$
+        \STATE ${\sf len} \gets {\sf len} \gg 1 $
+    \ENDWHILE
+    \STATE \Return $(t_i^{(1)})$
+\end{algorithmic}
+\end{algorithm}
+\vspace{-5pt}
+\blockalgend
+}
+
+\end{frame}
+
+
+\iffalse
+%
+%
+%
+\begin{frame}{SecNonzero in Masking FPR}
+
+\centerline{
+\blockalgstart{.6\textwidth}{{\large FPR}}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{algorithmic}[1]
+    \REQUIRE Sign bit $s$, exponent $e$, and 55-bit mantissa $z$
+    \ENSURE FPN $x$ packed by $s, e, z$
+    \STATE $e \gets e + 1076$
+    \STATE $b \gets \llbracket e < 0 \rrbracket$
+    \STATE $z \gets z \wedge (b-1)$
+    \STATE \textcolor{red}{$b \gets \llbracket z \neq 0 \rrbracket $}
+    \STATE $e \gets e \wedge (-b)$
+    \STATE $x \gets ((s \ll 63) \vee (z \gg 2)) + e \ll 52$
+    \STATE $f \gets {\tt0XC8} \gg z^{[3:1]} $
+    \STATE $x \gets x + f^{(1)}$ \COMMENT{increment if $z^{[3:1]}$ is 011,110 or 111} \\ 
+    \RETURN \hskip -4pt $x$
+  \end{algorithmic}
+\end{algorithm}
+\blockalgend
+}
+
+\end{frame}
+
+
+\begin{frame}{SecNonzero in Masking FprMul}
+
+\centerline{
+\blockalgstart{.9\textwidth}{{\large FprMul}}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{multicols}{2}
+  \begin{algorithmic}[1]
+    \REQUIRE FPN $x = (sx, ex, mx)$
+    \REQUIRE FPN $y = (sy, ey, my)$
+    \ENSURE FPN product of $x$ and $y$
+    \STATE $s \gets sx \oplus sy$ 
+    \STATE $e \gets ex + ey - 2100$ 
+    \STATE $z \gets mx \times my$
+    \STATE \textcolor{red}{$b \gets \llbracket z^{[50:1]} \neq 0 \rrbracket$}
+    \STATE $z \gets z^{[106:51]} \vee b$
+    \STATE $z' \gets (z \gg 1) \vee z^{(1)}$
+    \STATE $w \gets z^{(106)}$
+    \STATE $z \gets z \oplus (z \oplus z') \wedge (-w)$
+    \STATE $e \gets e + w$
+    \STATE \textcolor{red}{$bx \gets \llbracket ex \neq 0 \rrbracket$}, \textcolor{red}{$by \gets \llbracket ey \neq 0 \rrbracket$}
+    \STATE $b \gets bx \wedge by$
+    \STATE $z \gets z \wedge (-b)$ \\
+    \RETURN \hskip -4pt ${\sf FPR}(s, e, z)$
+  \end{algorithmic}
+  \end{multicols}
+\end{algorithm}
+\vspace{-10pt}
+\blockalgend
+}
+
+\end{frame}
+
+
+\begin{frame}{SecNonzero in Masking FprAdd}
+
+\centerline{
+\blockalgstart{.9\textwidth}{{\large FprAdd}}
+\begin{algorithm}[H]
+  \algsetup{linenosize=\small}
+  \begin{multicols}{2}
+  \small
+  \begin{algorithmic}[1]
+    \REQUIRE FPNs $x$ and $y$
+    \ENSURE FPN sum of $x$ and $y$
+    \STATE $d \gets x^{[63:1]} - y^{[63:1]}$
+    \STATE $cs \gets d^{(64)} \vee ((1 - (-d)^{(64)}) \wedge x^{(64)}) $
+    \STATE $m \gets (x \oplus y) \wedge (-cs)$
+    \STATE $x \gets x \oplus m, y \gets y \oplus m$
+    \STATE Extract $(sx, ex, mx)$ and $(sy, ey, my)$ from $x, y$, respectively.
+    \STATE $mx \gets mx \ll 3, my \gets my \ll 3$
+    \STATE $ex \gets ex - 1078, ey \gets ey - 1078$
+    \STATE $c \gets ex - ey$
+    \STATE $b \gets \llbracket c < 60 \rrbracket$ 
+    \STATE $my \gets my \wedge (-b) $ 
+    \STATE \textcolor{red}{$my \gets (my \gg c) \vee \llbracket my^{[c:1]} \neq 0 \rrbracket$}
+    \STATE $s \gets sx \oplus sy$
+    \STATE $z \gets mx + (-1)^s my $
+    \STATE Normalize $z, ex$ to make the 64th bit of $z$ set
+    \STATE \textcolor{red}{$z \gets (z \gg  9) \vee \llbracket z^{[9:1]} \neq 0 \rrbracket$}
+    \STATE $ex \gets ex + 9$ \\
+    \RETURN \hskip -4pt ${\sf FPR}(sx, ex, z)$
+  \end{algorithmic}
+  \end{multicols}
+\end{algorithm}
+\vspace{-10pt}
+\blockalgend
+}
+
+\end{frame}
+%
+%
+%
+\fi
