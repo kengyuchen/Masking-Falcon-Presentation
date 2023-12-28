@@ -1,6 +1,14 @@
+\newif\ifhandout
+
+%\handouttrue
+
+\ifhandout
+\documentclass[handout,xcolor=dvipsnames,aspectratio=169]{beamer}
+\else
 % \documentclass[xcolor=dvipsnames{beamer}
 \documentclass[xcolor=dvipsnames,aspectratio=169]{beamer}
-%\documentclass[handout,xcolor=dvipsnames,aspectratio=169]{beamer}
+
+\fi
 
 \usepackage[utf8]{inputenc}
 \usepackage{CJKutf8}
