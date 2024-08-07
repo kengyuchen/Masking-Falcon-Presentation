@@ -2,14 +2,14 @@
 
 Given 64-bit shares $(x_i)$ and 16-bit shares $(e_i)$, we need to derive new $(x_i')$ and $(e_i')$ such that
 \[
-\text{if } c \text{ is the smallest integer such that } \left( (\oplus_{i=1}^n x_i) \ll c \right) \in [2^{63}, 2^{64})
+\text{Let } c \text{ be the smallest integer such that } \left( (\oplus_{i=1}^n x_i) \ll c \right) \in [2^{63}, 2^{64})
 \]
 \[
 \text{then } (\oplus_{i=1}^n x_i') = \left( (\oplus_{i=1}^n x_i) \ll c \right) \text{ and } \sum_{i=1}^n e_i' = (\sum_{i=1}^n e_i) - c
 \]
 \pause
 
-We can repeatedly check whether $(x^{(64)}_i) = 0$, conditionally shift by $1$ bit, and then decrease $(e_i)$ by $\llbracket (x^{(64)}_i) = 0 \rrbracket$.
+We can repeatedly check whether $(x^{(64)}_i)$ is $0$, then conditionally shift by $1$ bit, and then decrease $(e_i)$ by $\llbracket (x^{(64)}_i) = 0 \rrbracket$.
 \pause
 
 To improve efficiency, we consider sequentially checking $x^{[64:64-2^j]} = 0$ for $j = 5,4,\cdots,0$.

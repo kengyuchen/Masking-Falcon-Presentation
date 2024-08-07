@@ -1,58 +1,44 @@
-%\begin{frame}{Experiment Setup}
-%
-%We implement our algorithms in the following setting:
-%
-%\begin{itemize}
-%\item Plain-C code
-%\item Compiled by {\tt arm-none-eabi-gcc 10.3.1}
-%\item Using ChipWhisperer with target board STM32F303 with an Arm Cortex-M4 MCU
-%\item Clock: 7.38MHz
-%\item We compare the result with the reference implementation of the NIST Round-3 Submission of \textsc{Falcon} \cite{NISTPQC-R3:FALCON20}.
-%\end{itemize}
-%
-%\end{frame}
+\begin{frame}{Performance Evaluation on ARM Cortex-M4}
+
+\begin{table}[ht]
+\footnotesize
+\centering
+\begin{tabular}{c r r@{\hspace{2pt}}l r@{\hspace{2pt}}l} 
+\toprule
+
+\multirow{2}{*}{\textbf{Gadget}} & \multicolumn{5}{c}{\textbf{Cycle}} \\
+\cline{2-6}
+& \textbf{Unmasked} & \multicolumn{2}{c}{\textbf{2 Shares}} & \multicolumn{2}{c}{\textbf{3 Shares}} \\
+\midrule
+
+{\sf SecFprMul}
+& \textbf{308} & \textbf{7134} & ($\mathbf{23 \times}$)  & \textbf{36388} & ($\mathbf{118 \times}$)  \\
+
+\midrule
+
+{\sf SecFprAdd}
+& \textbf{487} & \textbf{17154} & ($\mathbf{35 \times}$)  & \textbf{48291} & ($\mathbf{99 \times}$) \\
+
+\bottomrule
+\medskip
+\end{tabular}
+\caption{Performance evaluation of SecFprMul and SecFprAdd}
+\label{table:performance:overall}
+\end{table}
+
+
+\end{frame}
 
 
 
 \begin{frame}{Performance Evaluation on ARM Cortex-M4}
-
-
-%\begin{tabular}{r l  r r r} 
-%\toprule
-%\multicolumn{2}{c}{ \multirow{2}{*}{\textbf{Algorithm}} } & \multicolumn{3}{c}{ \textbf{Cycles} } \\ \cline{3-5}
-%\multicolumn{2}{c}{} & \textbf{Unmasked} & \textbf{2 Shares} & \textbf{3 Shares} \\
-%\midrule
-%
-%\multirow{6}{5em}{\hfil {\sf SecFprMul}}
-%& \textbf{Total} & \textbf{308} & \textbf{7134 ($\mathbf{23 \times}$)} & \textbf{36388} \\
-%& \quad 128-bit ${\sf A2B}$ & - & 1619 & 19253 \\ 
-%& \quad 64-bit ${\sf SecNonzero}$ & - & 389 & 1350 \\
-%& \quad Two 16-bit ${\sf SecNonzero}$ & - & 662 & 2012 \\ 
-%& \quad ${\sf SecFPR}$ & - & 3362 & 10813\\
-%& \#randombytes & - & 333  & 2005 \\
-%
-%\midrule
-% 
-%\multirow{8}{5em}{\hfil {\sf SecFprAdd}}
-%& \textbf{Total} & \textbf{487} & \textbf{17154} & \textbf{48291} \\
-%& \quad Three 64-bit ${\sf SecAdd}$ & - & 6990 & 16956 \\ 
-%& \quad Two 16-bit ${\sf B2A}$ & - & 88 & 332 \\ 
-%& \quad 16-bit ${\sf A2B}$ & - & 146  & 2267  \\
-%& \quad ${\sf SecFprUrsh}$ & - & 1112 & 3214 \\
-%& \quad ${\sf SecFprNorm64}$ & - & 2846 & 7270 \\
-%& \quad ${\sf SecFPR}$ & - & 3362  & 10813 \\
-%& \#randombytes & - & 849 & 2691  \\
-%
-%\bottomrule
-%\medskip
-%\end{tabular}
 
 \begin{table}[ht]
 \footnotesize
 \centering
 \begin{tabular}{r l r r@{\hspace{2pt}}l r@{\hspace{2pt}}l} 
 \toprule
-\multicolumn{2}{c}{ \multirow{2}{*}{\textbf{Algorithm}} } & \multicolumn{5}{c}{ \textbf{Cycles} } \\ \cline{3-7}
+\multicolumn{2}{c}{ \multirow{2}{*}{\textbf{Gadget}} } & \multicolumn{5}{c}{ \textbf{Cycle} } \\ \cline{3-7}
 \multicolumn{2}{c}{} & \textbf{Unmasked} & \multicolumn{2}{c}{\textbf{2 Shares}} & \multicolumn{2}{c}{\textbf{3 Shares}} \\
 \midrule
 
@@ -62,7 +48,8 @@
 & \quad 64-bit ${\sf SecNonzero}$ & - & 389 & & 1350 \\
 & \quad Two 16-bit ${\sf SecNonzero}$ & - & 662 & & 2012 \\ 
 & \textcolor<2>{red}{\quad ${\sf SecFPR}$} & - & \textcolor<2>{red}{3362} & & \textcolor<2>{red}{10813} \\
-& \#randombytes & - & 333  & & 2005 \\
+\cdashline{2-7}
+& \textbf{\#randombytes} & - & \textbf{333}  & & \textbf{2005} \\
 
 \midrule
  
@@ -74,7 +61,8 @@
 & \quad ${\sf SecFprUrsh}$ & - & 1112 & & 3214 \\
 & \quad ${\sf SecFprNorm64}$ & - & 2846 & & 7270 \\
 & \textcolor<2>{red}{\quad ${\sf SecFPR}$} & - & \textcolor<2>{red}{3362} &  & \textcolor<2>{red}{10813} \\
-& \#randombytes & - & 849 & & 2691  \\
+\cdashline{2-7}
+& \textbf{\#randombytes} & - & \textbf{849} & & \textbf{2691}  \\
 
 \bottomrule
 \medskip
@@ -87,22 +75,10 @@
 \end{frame}
 
 
-%\begin{frame}{Performance Evaluation}
-%
-%Some features:
-%\begin{itemize}
-%	\item For {\sf SecFprMul}, the cycle counts of 2-shared and 3-shared are about $23\times$ and $118\times$ than the unmasked.
-%	\item For {\sf SecFprAdd}, the cycle counts of 2-shared and 3-shared are about $35\times$ and $99\times$ than the unmasked.
-%	\item The main bottleneck is the SecAdd and A2B gadgets.
-%\end{itemize}
-%
-%\end{frame}
-
-
 \begin{frame}{Performance Evaluation on General Purpose CPU}
 \medskip
 
-We also test the time for signing one message on Intel-Core i9-12900 KF.
+We also test the time for signing one message on an Intel-Core i9-12900KF.
 \medskip
 %\begin{itemize}
 %	\item For 2-shared, and 3-shared, the times are about $7.7 \times$ and $24.9 \times$ than the unmasked.

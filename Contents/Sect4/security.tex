@@ -1,13 +1,14 @@
-\begin{frame}{Probing Model}
+\begin{frame}{Theoretical Security – Probing Model}
 
-To theoretically evaluate the security of our design, we consider the probing model \cite{C:IshSahWag03}.
-\pause
+%To theoretically evaluate the security of our design, we consider the probing model .
+%\pause
+For a positive integer $t$,
 \begin{itemize}
-	\item The $t$-probing model assumes that an adversary is able to peek any $t$ intermediate values in the algorithm.
+	\item The $t$-probing model  \cite{C:IshSahWag03} assumes that an adversary is able to peek any $t$ intermediate values in the algorithm.
 	\pause
 	\item To be secure in $t$-probing model, $n \geq t+1$, and any share cannot be combined with each other.
 	\pause
-	\item It is complicated to prove $t$-probing security for a large composition of small gadgets. The concept of non-interference is convenient in this case.
+	\item It is complicated to prove $t$-probing security for a large composition of gadgets. We apply the concept of non-interference.
 \end{itemize}
 
 \end{frame}
@@ -19,6 +20,7 @@ To theoretically evaluate the security of our design, we consider the probing mo
 A gadget is $t$-Non-Interference ($t$-NI) secure if every set of $t$ intermediate values can be simulated by no more than $t$ shares of each of its inputs.
 \end{definition}
 \medskip
+\pause
 
 \begin{definition}{$t$-Strong Non-Interference ($t$-SNI) Security (from \cite{CCS:BBDFGS16})}
 A gadget is $t$-Strong-Non-Interference ($t$-SNI) secure if for every set of $t_I$ internal intermediate values and $t_O$ of its output shares with $t_I + t_O \leq t$, they can be simulated by no more than $t_I$ shares of each of its inputs.
@@ -30,30 +32,26 @@ A gadget is $t$-Strong-Non-Interference ($t$-SNI) secure if for every set of $t_
 
 \begin{frame}{Non-Interference Security}
 
-For $t = n-1$, if a gadget is $t$-NI or $t$-SNI secure, and if any $n-1$ input shares are uniformly and independently distributed, then it is $t$-probing secure.
-\medskip
-
-\pause
-Moreover,
-\pause
 \begin{itemize}
-	\item $t$-SNI is stronger than $t$-NI by definition.
-	\pause
-	\item A composition of $t$-NI gadgets may not be $t$-NI, so we insert $t$-SNI gadgets to make it $t$-NI or $t$-SNI.
-\end{itemize}
+
+\item For $t = n-1$, if a gadget is $t$-NI or $t$-SNI secure, and if any $n-1$ input shares are uniformly and independently distributed, then it is $t$-probing secure.
 \pause
-All the gadgets/algorithms in our paper are proven either $t$-NI or $t$-SNI secure.
+
+\item All the gadgets in our paper are proven either $t$-NI or $t$-SNI secure.
+
+\end{itemize}
+
 
 \end{frame}
 
 
-\begin{frame}{Gadgets/Algorithms in Our Work}
+\begin{frame}{Non-Interference Security of Gadgets in Our Work}
 
 \begin{table}
 \centering
 \begin{tabular}{l l | l l} 
 \toprule
-\textbf{Algorithm} & \textbf{Security$\quad$} & \textbf{Algorithm} & \textbf{Security$\quad$} \\
+\textbf{Gadget} & \textbf{Security$\quad$} & \textbf{Gadget} & \textbf{Security$\quad$} \\
 \midrule
 {\sf SecAnd} & $t$-SNI & {\sf SecOr} & $t$-SNI \\
 {\sf SecMult} & $t$-SNI & {\sf SecNonzero} & $t$-SNI \\
@@ -65,17 +63,15 @@ ${\sf B2A_{Bit}}$ & $t$-SNI & {\sf SecFprMul} & $t$-SNI\\
 {\sf Refresh} & $t$-SNI \\
 \bottomrule
 \end{tabular}
-\caption{List of gadgets/algorithms in our work with $n=t+1$ shares}
+\caption{List of gadgets in our work with $n=t+1$ shares}
 \label{table:gadgets_secureity}
 \end{table}
 \end{frame}
 
-\begin{frame}{Test Vector Leakage Assessment (TVLA)}
 
-Probing model validates the security theoretically.
-\pause
+\begin{frame}{Practical Security – Test Vector Leakage Assessment (TVLA)}
 
-In practice, the Test Vector Leakage Assessment (TVLA) methodology \cite{gilbert2011testing} can be applied.
+To test the leakage of a real device, the Test Vector Leakage Assessment (TVLA) methodology \cite{gilbert2011testing} can be applied.
 \pause
 
 A tester records two sets of traces where
@@ -94,14 +90,14 @@ The Welch's $t$-test is then applied on the two sets.
 By convention, we consider the leakage is significant if the $t$-value exceeds $\pm 4.5$.
 \pause
 
-For traces with a large number of points, we refer to \cite{ding2018towards} alter this threshold to avoid false positives.
+For long traces, we refer to \cite{ding2018towards} to alter this threshold to avoid false positives.
 
 \end{frame}
 
 
 \begin{frame}{Experiment Setup}
 
-We implement our algorithms in the following setting:
+We implemented our design in the following setting:
 \pause
 
 \begin{itemize}
@@ -109,7 +105,7 @@ We implement our algorithms in the following setting:
 \pause
 \item Compiled by {\tt arm-none-eabi-gcc 10.3.1}
 \pause
-\item Using ChipWhisperer with target board STM32F303 with an ARM Cortex-M4 MCU
+\item Using ChipWhisperer with target board STM32F415 with an ARM Cortex-M4 MCU
 \pause
 \item We compare the result with the reference implementation of the NIST Round-3 Submission of \textsc{Falcon} \cite{NISTPQC-R3:FALCON20}.
 \end{itemize}

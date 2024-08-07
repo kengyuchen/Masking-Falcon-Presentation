@@ -1,17 +1,17 @@
-\begin{frame}{Power Analysis Attacks}
+\begin{frame}{Power Analysis and Electromagnetic Attacks}
 
 \begin{itemize}
-\item Power consumption during the execution of programs depends on intermediate values.
+\item Power consumption and electromagnetic radiation during the execution of programs depend on intermediate values.
 \pause
-\item Power analysis attacks, the side-channel attacks on the pre-image vector computation, leverage this fact to find the secret key. 
+\item Side-channel attacks on the pre-image vector computation \cite{KA21, TCHES:GMRR22}, leverage this fact to find the secret key. 
 \pause
 \end{itemize}
-\vspace{-4pt}
-\begin{figure}
-\includegraphics[width=.45\textwidth]{Figure/trace_example.png}
-\vspace{-5pt}
-\caption{An Example of a Power Trace}
-\end{figure}
+%\vspace{-4pt}
+%\begin{figure}
+%\includegraphics[width=.45\textwidth]{Figure/trace_example.png}
+%\vspace{-5pt}
+%\caption{An Example of a Power Trace}
+%\end{figure}
 
 \end{frame}
 
@@ -19,7 +19,7 @@
 
 \begin{frame}{Masking}
 
-Masking defends such threats by secret-sharing the sensitive variables.
+Masking resists such threats by secret-sharing the sensitive variables.
 \pause
 \begin{itemize}
 	\item Boolean Masking: A variable $x$ is split into $n$ shares $(x_i)$ such that
@@ -32,21 +32,10 @@ Masking defends such threats by secret-sharing the sensitive variables.
 	x = \sum_{i=1}^n x_i \quad (\bmod\; 2^k)
 	\]
 \end{itemize}
+\medskip
+In each run, all $x_i$'s are randomized so that any $n-1$ shares of them are independently and uniformly distributed.
 
 \end{frame}
-
-
-\begin{frame}{Masking}
-
-\begin{itemize}
-\item In each run, all $x_i$'s are randomized so that any $n-1$ shares of them are independently and uniformly distributed.
-\pause
-\item All operations need to be operated via shares.
-\end{itemize}
-
-
-\end{frame}
-
 
 %\begin{frame}{Probing Model}
 %

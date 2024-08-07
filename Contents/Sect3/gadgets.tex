@@ -109,7 +109,7 @@ We design novel gadgets for these three operations, including:
 	\item {\sf SecFprNorm64} (Algorithm \ref{alg:SecFprNorm64}): securely normalizing a secret value to $[2^{63}, 2^{64})$
 \end{itemize}
 \pause
-In addition, we make several improvements to reduce the cost.
+In addition, we make several improvements to reduce the costs.
 
 \end{frame}
 
@@ -118,11 +118,11 @@ In addition, we make several improvements to reduce the cost.
 
 \begin{table}
 \centering
-\begin{tabular}{ l l c} 
+\begin{tabular}{ l l l} 
 \toprule
-\textbf{Algorithm} & \textbf{Description} & \textbf{Reference} \\
+\textbf{Gadget} & \textbf{Description} & \textbf{Reference} \\
 \midrule
-\textcolor<2>{red}{{\sf SecAnd}} & \textcolor<2>{red}{AND of Boolean shares} & \textcolor<2>{red}{\cite{C:IshSahWag03, CCS:BBDFGS16}} \\
+\sf SecAnd & AND of Boolean shares & \cite{C:IshSahWag03, CCS:BBDFGS16} \\
 {\sf SecMult} & Multiplication of arithmetic shares & \cite{C:IshSahWag03, CCS:BBDFGS16} \\
 {\sf SecAdd} & Addition of Boolean shares & \cite{FSE:CGTV15, EC:BBEFGR18} \\
 {\sf A2B} & Arithmetic to Boolean conversion & \cite{PKC:SPOG19} \\

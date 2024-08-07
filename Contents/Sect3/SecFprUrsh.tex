@@ -1,6 +1,6 @@
 \begin{frame}{SecFprUrsh}
 
-Given 64-bit shares $(x_i)$ and 6-bit $(c_i)$, we need to derive shares $(z_i)$ such that
+Given 64-bit shares $(x_i)_{i=1}^n$ and 6-bit $(c_i)_{i=1}^n$, we need to derive shares $(z_i)_{i=1}^n$ such that
 \[
 \bigoplus_{i=1}^n z_i = \left( \left( \bigoplus_{i=1}^n x_i \right) \gg \left( \sum_{i=1}^n c_i \bmod 2^{6} \right) \right) \vee \left \llbracket \bigoplus_{i=1}^n x_i^{[c:1]} \neq 0 \right \rrbracket
 \]
@@ -21,7 +21,7 @@ We observe that
 
 \begin{frame}{SecFprUrsh}
 
-Hence, our idea is to right-rotate all $(x_i)$ by $c_1, c_2, \cdots, c_n$ sequentially.
+Hence, our idea is to right-rotate all $x_i's$ by $c_1, c_2, \cdots, c_n$ sequentially.
 \pause
 \medskip
 
