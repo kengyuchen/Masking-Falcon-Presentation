@@ -1,20 +1,24 @@
 \begin{frame}{SecNonzero}
 
-We need a gadget that, given shares $(x_i)_{i=1}^n$, can derive one-bit shares $(b_i)_{i=1}^n$  such that
+We need a gadget that, given shares $(x_i)_{i=1}^n$, outputs one-bit shares $(b_i)_{i=1}^n$  such that
 \[
 \left \llbracket \bigoplus_{i=1}^n x_i \neq 0 \right\rrbracket = \bigoplus_{i=1}^n b_i \quad \text{or} \quad \textcolor<2->{trans}{\left \llbracket \sum_{i=1}^n x_i \neq 0 \right\rrbracket = \bigoplus_{i=1}^n b_i}
 \]
 \pause
-For Boolean shares, our method is by considering OR-ing all the bits.
+For Boolean shares, our method is by OR-ing all the bits.
 \[
  x = 0  \Longleftrightarrow x^{(k)} \vee x^{(k-1)} \vee \cdots \vee x^{(1)} = 0
 \]
 \pause
-Now we turn to a gadget for secure OR operations.
+Then we need a gadget for secure OR operations, which can be constructed by applying the De Morgan's law and a SecAnd gadget \cite{C:IshSahWag03, CCS:BBDFGS16}.
     
 \end{frame}
 
 
+%
+%
+%
+\iffalse
 \begin{frame}{SecOr: OR of Boolean Shares}
 
 \centerline{
@@ -42,24 +46,52 @@ x \vee y = \neg \left[ (\neg x) \wedge (\neg y) \right]
 \]
 
 \end{frame}
+\fi
+%
+%
+%
 
 
 \begin{frame}{SecNonzero}
 
 For arithmetic shares, instead of applying an $n$-shared {A2B}, we consider that
+
+%
+%
+%
+\iffalse
 \[
 \sum_{i=1}^{n} x_i = 0  \Longleftrightarrow  \sum_{i=1}^{\frac{n}{2}} x_i = \sum_{i=\frac{n}{2}+1}^{n} (-x_i) \Longleftrightarrow \sum_{i=1}^{\frac{n}{2}} x_i \oplus \sum_{i=\frac{n}{2}+1}^{n} (-x_i) = 0
 \]
+\fi
+%
+%
+%
+
+\[
+\sum_{i=1}^{n} x_i = 0 \Longleftrightarrow \sum_{i=1}^{\frac{n}{2}} x_i \oplus \sum_{i=\frac{n}{2}+1}^{n} (-x_i) = 0
+\]
+
 \pause
-So we apply two $n/2$-shared {\sf A2B}s to the first $n/2$ shares and negative of the second $n/2$ shares and use the same idea.
+%So we apply two $n/2$-shared {\sf A2B}s to the first $n/2$ shares and negative of the last $n/2$ shares and use the same idea.
+
+\[
+{\sf SecNonzero}_{\sf arith}(x_1,\cdots,x_n) = {\sf SecNonzero}_{\sf Bool}( {\sf A2B}(x_1,\cdots,x_{\frac{n}{2}}),\; {\sf A2B}(x_{\frac{n}{2}+1},\cdots,x_{n}))
+\]
+
 \pause
 \medskip
 
-In this way, we replace one $n$-shared {A2B} with two $n/2$-shared {\sf A2B}s, which is usually more efficient.
+In this way, we replace one $n$-shared {A2B} with two $n/2$-shared {\sf A2B}s.
     
 \end{frame}
 
 
+
+\iffalse
+%
+%
+%
 \begin{frame}{SecNonzero}
 
 \centerline{
@@ -94,10 +126,7 @@ In this way, we replace one $n$-shared {A2B} with two $n/2$-shared {\sf A2B}s, w
 \end{frame}
 
 
-\iffalse
-%
-%
-%
+
 \begin{frame}{SecNonzero in Masking FPR}
 
 \centerline{

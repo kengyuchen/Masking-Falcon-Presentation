@@ -1,36 +1,61 @@
 \begin{frame}{Introduction to \textsc{Falcon}}
-
-\begin{itemize}
-    \item A NIST-standardized digital signature
-    \item Use the Gentry-Peikert-Vaikuntanathan (GPV) framework \cite{STOC:GenPeiVai08} with NTRU lattices
-\end{itemize}
-\medskip
+\vskip -10pt
 \begin{columns}[T]
 
-\column{.33\textwidth}
+\column{.44\textwidth}
 \begin{block}{KeyGen}
-Public Key: $\mathbf{A} \in \Z^{N \times M}_q$\\
-Secret Key: Short $\mathbf{B} \in \Z_q^{M \times M}$
-\vskip -10pt
-\[ \mathbf{BA}^T = \mathbf{0} \bmod q \]
-\end{block}
+\visible<2->{
+Secret Key: Short polynomials $f, g, F, G \in \Z[x] / (x^N+1)$ such that $ fG - gF = q$ and
+\[
+    \mathbf{B} = \left[
+\begin{array}{c|c}
+g & -f \\ \hline G & -F
+\end{array} \right]
+\]
+}
 
-\column{.3\textwidth}
-\begin{block}{Sign(${\sf m}$)}
-A short $\mathbf{s}$ s.t.
-\vskip -22pt
-\[ \mathbf{sA}^T = H({\sf m}) \bmod q \]
 \vskip -8pt
-$H:\{0,1\}^* \to \{0,1\}^N$
+
+\visible<3->{
+
+Public Key: Polynomial $h = gf^{-1} \bmod q$ and
+\[
+\mathbf{A} = \left[
+\begin{array}{c|c} 1 & h \end{array} \right]
+\]
+Note that
+\vskip -10pt
+\[
+\mathbf{BA}^T = \mathbf{0} \bmod q
+\]
+\vskip -20pt
+}
 \end{block}
 
-\column{.3\textwidth}
+\column{.31\textwidth}
+\vskip 15pt
+
+\begin{block}{Sign(${\sf m}$)}
+\visible<4->{
+A short signature $\mathbf{s}$ such that
+\vskip -20pt
+\[
+\mathbf{sA}^T = H({\sf r} \| {\sf m}) \bmod q
+\]
+\vskip -5pt
+where $H$ is a hash function and $r$ is the random salt
+}
+\end{block}
+
+%\column{.28\textwidth}
 \begin{block}{Verify(${\sf m}$, $\mathbf{s}$)}
+\visible<5->{
 Check
 \begin{enumerate}
     \item $\mathbf{s}$ is short
-    \item $\mathbf{sA}^T = H({\sf m}) \bmod q$
+    \item $\mathbf{sA}^T = H({\sf r} \| {\sf m}) \bmod q$
 \end{enumerate}
+}
 \end{block}
 
 \end{columns}
@@ -39,23 +64,33 @@ Check
 
 \begin{frame}{Introduction to \textsc{Falcon}}
 
-To find such a short $\mathbf{s}$, one can first
+To find such a short $\mathbf{s}$, one can
 \pause
 \begin{itemize}
-    \item Compute $H({\sf m})$
+    \item Compute $c \gets H({\sf r} \| {\sf m})$.
     \pause
-    \item Find a solution $\mathbf{c}$ (not short) where $\mathbf{c}\mathbf{A}^T = H({\sf m}) \bmod q$
+    \item Find a solution $\mathbf{c} \gets \left[
+\begin{array}{c|c} c & 0 \\ \end{array} \right]$ such that $\mathbf{c}\mathbf{A}^T = H({\sf r} \| {\sf m}) \bmod q$.
     \pause
-    \item \textcolor{red}{Compute the pre-image vector $\mathbf{t} \gets \mathbf{c}\mathbf{B}^{-1}$}
+    \item \textcolor<7->{red}{Compute the pre-image vector $\mathbf{t} \gets \mathbf{c}\mathbf{B}^{-1}$.}
     \pause
-    \item Apply the nearest plane algorithm to find an integer vector $\mathbf{z}$ such that $\mathbf{(t-z)B}$ is short.
+    \item Apply the nearest plane algorithm \cite{ducas2016fast} to find a vector $\mathbf{z}$ such that $\mathbf{(t-z)B}$ is short.
     \pause
-    \item $\mathbf{s} \gets \mathbf{(t-z)B}$. Note that $\mathbf{s}\mathbf{A}^T = H({\sf m}) \bmod q$
+    \item $\mathbf{s} \gets \mathbf{(t-z)B}$. Note that $\mathbf{s}\mathbf{A}^T = H({\sf r} \| {\sf m}) \bmod q$.
 \end{itemize}
 
 \end{frame}
 
+
+
 %\input{Contents/Sect2/nearest-plane}
+
+
+
+%
+%
+%
+\iffalse
 
 \begin{frame}{Introduction to \textsc{Falcon}}
 
@@ -78,7 +113,7 @@ g & -f \\ \hline G & -F
 \end{itemize}
 
 \pause
-Moreover, \textsc{Falcon} applies the fast Fourier nearest plane algorithm \cite{ducas2016fast} to speed up the signing process.
+Moreover, \textsc{Falcon} applies the fast Fourier nearest plane algorithm \cite{ducas2016fast} to speed up.
 
 \end{frame}
 
@@ -148,3 +183,8 @@ Moreover, \textsc{Falcon} applies the fast Fourier nearest plane algorithm \cite
 \end{columns}
     
 \end{frame}
+
+\fi
+%
+%
+%

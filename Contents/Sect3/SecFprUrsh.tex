@@ -1,19 +1,33 @@
 \begin{frame}{SecFprUrsh}
 
-Given 64-bit shares $(x_i)_{i=1}^n$ and 6-bit $(c_i)_{i=1}^n$, we need to derive shares $(z_i)_{i=1}^n$ such that
+%
+%
+%
+\iffalse
+Given 64-bit shares $(x_i)$ and 6-bit shares $(c_i)$, we need to derive shares $(z_i)$ such that
 \[
 \bigoplus_{i=1}^n z_i = \left( \left( \bigoplus_{i=1}^n x_i \right) \gg \left( \sum_{i=1}^n c_i \bmod 2^{6} \right) \right) \vee \left \llbracket \bigoplus_{i=1}^n x_i^{[c:1]} \neq 0 \right \rrbracket
 \]
+%
+%
+%
+\fi
+
+Given 64-bit shares $(x_i)$ and 6-bit shares $(c_i)$, we need to derive shares $(z_i)$ such that
+\[
+\bigoplus_{i=1}^n z_i = \left( \bigoplus_{i=1}^n x_i \right) \gg \left( \sum_{i=1}^n c_i \bmod 64 \right)
+\]
+
 \pause
+\medskip
+
 We observe that
 \pause
 \begin{itemize}
 
 \item Right-shifting and right-rotating by a value $c$ only differ by the most $c$ significant bits.
 \pause
-\item Both shifting and rotating can be operated share-wise.
-\pause
-\item Right-rotating $x$ by a value $c$ is equal to right-rotating $x$ by a value $c \bmod 64$.
+\item Right-rotating $x$ by a value $c$ is equal to right-rotating $x$ by $c \bmod 64$.
 \end{itemize}
 
 \end{frame}
@@ -27,19 +41,24 @@ Hence, our idea is to right-rotate all $x_i's$ by $c_1, c_2, \cdots, c_n$ sequen
 
 Some high bits are redundant, so we use an index $m = (1 \ll 63)$ to indicate the first meaningful bit of the result.
 \pause
-To clear the redundant high bits, consider
+Consider
 \[
-m' := m \gg c = (\underbrace{0, \cdots, 0}_{c \text{ bits}}, 1, 0, \cdots, 0)
+m \gg c = (\underbrace{0 \cdots 0}_{c \text{ bits}} 1 0 \cdots 0)_2
 \]
 \pause
 \[
-m'' := m' \oplus (m' \gg 1) \oplus \cdots \oplus (m' \gg 63) = (\underbrace{0, \cdots, 0}_{c \text{ bits}}, 1, 1, \cdots, 1)
+m' := m \gg c \oplus (m \gg c) \gg 1 \oplus \cdots \oplus (m \gg c) \gg 63 = (\underbrace{0 \cdots 0}_{c \text{ bits}} 1 1 \cdots 1)_2
 \]
 \pause
-By an AND operation with $m''$, we can clear useless bits. Moreover, these redundant bits actually form the sticky bit.
+By an AND operation with $m'$, we can clear useless bits.
 
 \end{frame}
 
+
+%
+%
+%
+\iffalse
 
 \begin{frame}{SecFprUrsh}
 
@@ -80,8 +99,6 @@ By an AND operation with $m''$, we can clear useless bits. Moreover, these redun
 
 \end{frame}
 
-
-\iffalse
 
 \begin{frame}{SecFprUrsh in Masking FprAdd}
 

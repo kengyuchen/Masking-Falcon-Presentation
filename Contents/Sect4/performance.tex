@@ -1,7 +1,7 @@
 \begin{frame}{Performance Evaluation on ARM Cortex-M4}
 
 \begin{table}[ht]
-\footnotesize
+%\small
 \centering
 \begin{tabular}{c r r@{\hspace{2pt}}l r@{\hspace{2pt}}l} 
 \toprule
@@ -11,13 +11,13 @@
 & \textbf{Unmasked} & \multicolumn{2}{c}{\textbf{2 Shares}} & \multicolumn{2}{c}{\textbf{3 Shares}} \\
 \midrule
 
-{\sf SecFprMul}
-& \textbf{308} & \textbf{7134} & ($\mathbf{23 \times}$)  & \textbf{36388} & ($\mathbf{118 \times}$)  \\
+{\sf FprMul/SecFprMul}
+& 308 & 7134 & ($23 \times$)  & 36388 & ($118 \times$)  \\
 
 \midrule
 
-{\sf SecFprAdd}
-& \textbf{487} & \textbf{17154} & ($\mathbf{35 \times}$)  & \textbf{48291} & ($\mathbf{99 \times}$) \\
+{\sf FprAdd/SecFprAdd}
+& 487 & 17154 & ($35 \times$)  & 48291 & ($99 \times$) \\
 
 \bottomrule
 \medskip
@@ -34,46 +34,50 @@
 \begin{frame}{Performance Evaluation on ARM Cortex-M4}
 
 \begin{table}[ht]
-\footnotesize
+%\small
 \centering
-\begin{tabular}{r l r r@{\hspace{2pt}}l r@{\hspace{2pt}}l} 
+\begin{tabular}{r l r@{\hspace{2pt}}l r@{\hspace{2pt}}l} 
 \toprule
-\multicolumn{2}{c}{ \multirow{2}{*}{\textbf{Gadget}} } & \multicolumn{5}{c}{ \textbf{Cycle} } \\ \cline{3-7}
-\multicolumn{2}{c}{} & \textbf{Unmasked} & \multicolumn{2}{c}{\textbf{2 Shares}} & \multicolumn{2}{c}{\textbf{3 Shares}} \\
+\multicolumn{2}{c}{ \multirow{2}{*}{\textbf{Gadget}} } & \multicolumn{4}{c}{ \textbf{Cycle} } \\ \cline{3-6}
+\multicolumn{2}{c}{} & \multicolumn{2}{c}{\textbf{2 Shares}} & \multicolumn{2}{c}{\textbf{3 Shares}} \\
 \midrule
 
-\multirow{6}{5em}{\hfil {\sf SecFprMul}}
-& \textbf{Total} & \textbf{308} & \textbf{7134} & ($\mathbf{23 \times}$)  & \textbf{36388} & ($\mathbf{118 \times}$)  \\
-& \textcolor<2>{red}{\quad 128-bit ${\sf A2B}$} & - & \textcolor<2>{red}{1619} & & \textcolor<2>{red}{19253} \\ 
-& \quad 64-bit ${\sf SecNonzero}$ & - & 389 & & 1350 \\
-& \quad Two 16-bit ${\sf SecNonzero}$ & - & 662 & & 2012 \\ 
-& \textcolor<2>{red}{\quad ${\sf SecFPR}$} & - & \textcolor<2>{red}{3362} & & \textcolor<2>{red}{10813} \\
-\cdashline{2-7}
-& \textbf{\#randombytes} & - & \textbf{333}  & & \textbf{2005} \\
+\multirow{3}{5em}{\hfil {\sf SecFprMul}}
+& \textbf{Total} & \textbf{7134} & & \textbf{36388} & \\
+& 128-bit ${\sf A2B}$ \cite{PKC:SPOG19} & 1619 & ($23\%$) &  19253 & ($53\%$) \\ 
+%& \quad 64-bit ${\sf SecNonzero}$ & 389 & & 1350 \\
+%& \quad Two 16-bit ${\sf SecNonzero}$ & 662 & & 2012 \\ 
+& ${\sf SecFPR}$ & \quad 3362 & ($47\%$) &  \quad 10813 & ($30\%$) \\
+%\cdashline{2-6}
+%& \textbf{\#randombytes} & \textbf{333}  & & \textbf{2005} \\
 
 \midrule
  
-\multirow{8}{5em}{\hfil {\sf SecFprAdd}}
-& \textbf{Total} & \textbf{487} & \textbf{17154} & ($\mathbf{35 \times}$)  & \textbf{48291} & ($\mathbf{99 \times}$) \\
-& \textcolor<2>{red}{\quad Three 64-bit ${\sf SecAdd}$} & - & \textcolor<2>{red}{6990} & & \textcolor<2>{red}{16956} \\ 
-& \quad Two 16-bit ${\sf B2A}$ & - & 88 & & 332 \\ 
-& \quad 16-bit ${\sf A2B}$ & - & 146 &  & 2267  \\
-& \quad ${\sf SecFprUrsh}$ & - & 1112 & & 3214 \\
-& \quad ${\sf SecFprNorm64}$ & - & 2846 & & 7270 \\
-& \textcolor<2>{red}{\quad ${\sf SecFPR}$} & - & \textcolor<2>{red}{3362} &  & \textcolor<2>{red}{10813} \\
-\cdashline{2-7}
-& \textbf{\#randombytes} & - & \textbf{849} & & \textbf{2691}  \\
+\multirow{3}{5em}{\hfil {\sf SecFprAdd}}
+& \textbf{Total} & \textbf{17154} & & \textbf{48291} & \\
+& 64-bit ${\sf SecAdd}$ \cite{EC:BBEFGR18} & 6990 & ($41\%$) & 16956 & ($35\%$) \\ 
+%& \quad Two 16-bit ${\sf B2A}$ & 88 & & 332 \\ 
+%& \quad 16-bit ${\sf A2B}$ & 146 &  & 2267  \\
+%& \quad ${\sf SecFprUrsh}$ & 1112 & & 3214 \\
+%& \quad ${\sf SecFprNorm64}$ & 2846 & & 7270 \\
+& ${\sf SecFPR}$ & 3362 & ($20\%$)  & 10813 & ($22\%$) \\
+%\cdashline{2-6}
+%& \textbf{\#randombytes} & \textbf{849} & & \textbf{2691}  \\
 
 \bottomrule
 \medskip
 \end{tabular}
-\caption{Performance results of each component in Algorithm \ref{alg:SecFPR}, \ref{alg:SecFprMul}, and \ref{alg:SecFprAdd}. We count the cycles for subroutines and the total random numbers used in bytes.}
+\caption{Performance evaluation of each component in SecFprMul and SecFprAdd.}
 \label{table:performance:component}
 \end{table}
 
-
 \end{frame}
 
+
+%
+%
+%
+\iffalse
 
 \begin{frame}{Performance Evaluation on General Purpose CPU}
 \medskip
@@ -101,3 +105,8 @@ We also test the time for signing one message on an Intel-Core i9-12900KF.
 
 
 \end{frame}
+
+%
+%
+%
+\fi

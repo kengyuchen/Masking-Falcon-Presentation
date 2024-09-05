@@ -1,23 +1,29 @@
 \begin{frame}{SecFprNorm64}
 
-Given 64-bit shares $(x_i)$ and 16-bit shares $(e_i)$, we need to derive new $(x_i')$ and $(e_i')$ such that
+Given 64-bit shares $(x_i)$ and 16-bit shares $(e_i)$, we need to derive shares $(x_i')$ and $(e_i')$ such that
 \[
-\text{Let } c \text{ be the smallest integer such that } \left( (\oplus_{i=1}^n x_i) \ll c \right) \in [2^{63}, 2^{64})
+\bigoplus_{i=1}^n x_i' = \bigoplus_{i=1}^n x_i \ll c \text{ and } \sum_{i=1}^n e_i' = (\sum_{i=1}^n e_i) - c
 \]
 \[
-\text{then } (\oplus_{i=1}^n x_i') = \left( (\oplus_{i=1}^n x_i) \ll c \right) \text{ and } \sum_{i=1}^n e_i' = (\sum_{i=1}^n e_i) - c
+\text{where } c \text{ is the smallest integer such that } \bigoplus_{i=1}^n x_i \ll c \in [2^{63}, 2^{64})
 \]
 \pause
 
-We can repeatedly check whether $(x^{(64)}_i)$ is $0$, then conditionally shift by $1$ bit, and then decrease $(e_i)$ by $\llbracket (x^{(64)}_i) = 0 \rrbracket$.
+We repeatedly check whether $(x^{(64)}_i)$ is $0$ or not, then conditionally shift it by $1$ bit, and then decrease $(e_i)$ by $\llbracket (x^{(64)}_i) = 0 \rrbracket$.
 \pause
+\medskip
 
-To improve efficiency, we consider sequentially checking $x^{[64:64-2^j]} = 0$ for $j = 5,4,\cdots,0$.
-\pause
+To improve efficiency, we sequentially check $x^{[64:64-2^j]} = 0$ for $j = 5,4,\cdots,0$.
 
-In addition, we first decrease $(e_i)$ by $63$ and later add $\llbracket (x^{[64:64-2^j]}_i) \neq 0 \rrbracket \cdot 2^j$ to it.
+%In addition, we first decrease $(e_i)$ by $63$ and later add $\llbracket (x^{[64:64-2^j]}_i) \neq 0 \rrbracket \cdot 2^j$ to it.
 \end{frame}
 
+
+
+\iffalse
+%
+%
+%
 \begin{frame}{SecFprNorm64}
 
 \centerline{
@@ -54,10 +60,6 @@ In addition, we first decrease $(e_i)$ by $63$ and later add $\llbracket (x^{[64
 \end{frame}
 
 
-\iffalse
-%
-%
-%
 \begin{frame}{SecFprNorm64 in Masking FprAdd}
 
 \centerline{

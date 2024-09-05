@@ -2,25 +2,28 @@
 
 The pre-image vector computation includes polynomial multiplications
 \[
-\textbf{t} = \left[ \begin{array}{c|c} c & 0 \\ \end{array} \right] \cdot \mathbf{B}^{-1}
+\textbf{t} = \mathbf{c} \mathbf{B}^{-1}
 = \frac{1}{q} \left[ \begin{array}{c|c} c \cdot -F & c \cdot f \\ \end{array} \right]
 \]
 \pause
 
-To speed up and apply the fast Fourier nearest plane algorithm, the pre-image vector computation is performed in the Fourier domain:
+To speed up, the pre-image vector computation is performed after the Fourier transform:
 \[
 \frac{1}{q} \left[ \begin{array}{c|c} {\sf FFT}(c) \odot {\sf FFT}(-F) & {\sf FFT}(c) \odot {\sf FFT}(f) \end{array} \right]
 \]
 \pause
 
 Therefore, the pre-image vector computation is essentially coefficient-wise complex number multiplications.
-
 \end{frame}
 
 
 \begin{frame}{Floating-Point Number}
 
-A complex number is represented by two 64-bit floating-point numbers (FPNs). An FPN is composed of sign bit $s$, exponent $e$, and mantissa $\tilde{m}$
+A complex number is represented by two 64-bit floating-point numbers (FPNs), its real and imaginary parts.
+
+\medskip
+\pause
+An FPN is composed of sign bit $s$, exponent $e$, and mantissa $\tilde{m}$
 
 \begin{figure}
     \centering
@@ -29,9 +32,8 @@ A complex number is represented by two 64-bit floating-point numbers (FPNs). An 
     \label{fig:64bitfpr}
 \end{figure}
 
+\pause
 The value is $(-1)^s \cdot 2^{e - 1023} \cdot \underbrace{(1 + \tilde{m} \cdot 2^{-52})}_{\times 2^{52} = m}$
-
-For convenience, we may use $(s, e, m)$ to represent an FPN.
 
 \end{frame}
 
@@ -42,10 +44,10 @@ For convenience, we may use $(s, e, m)$ to represent an FPN.
 \column{0.5\textwidth}
 FPN multiplication (FprMul) is proceeded by
     \only<2->{\begin{enumerate} \item Sign bit XOR}
-    \only<3->{\item Exponent Addition}
-    \only<4->{\item Mantissa Multiplication}
-    \only<5->{\item Right-shifting the mantissa to $[2^{54}, 2^{55})$}
-    \only<6->{\item Combining the results and rounding (FPR)}
+    \only<3->{\item Exponent addition}
+    \only<4->{\item Mantissa multiplication}
+    \only<5->{\item Right-shifting the result}
+    \only<6->{\item Packing and rounding (FPR)}
 \only<2->{\end{enumerate}}
 
 \column{0.5\textwidth}
@@ -53,9 +55,9 @@ FPN addition (FprAdd) is proceeded by
 
     \only<7->{\begin{enumerate} \item  Making the first operand $\geq$ the second}
     \only<8->{ \item Right-shifting the second operand}
-    \only<9->{ \item Mantissa Addition / Subtraction}
-    \only<10->{ \item Normalizing the sum to $[2^{54}, 2^{55})$}
-	\only<11->{\item  Combining the results and rounding (FPR)}
+    \only<9->{ \item Mantissa addition / subtraction}
+    \only<10->{ \item Normalizing the result}
+	\only<11->{\item  Packing and rounding (FPR)}
 \only<7->{\end{enumerate}}
 
 \end{columns}
@@ -64,6 +66,11 @@ FPN addition (FprAdd) is proceeded by
 \pause
 
 \end{frame}
+
+%
+%
+%
+\iffalse
 
 
 \begin{frame}{Sticky Bit}
@@ -78,6 +85,8 @@ It indicates whether there exists any $1$ after the least significant bit. In th
 \]
 
 \end{frame}
+\fi
+
 
 \iffalse
 %

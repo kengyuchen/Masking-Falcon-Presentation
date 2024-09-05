@@ -1,10 +1,13 @@
-\begin{frame}{Power Analysis and Electromagnetic Attacks}
+%
+%
+%
+\iffalse
+\begin{frame}{Power and Electromagnetic Analysis Attacks}
 
 \begin{itemize}
 \item Power consumption and electromagnetic radiation during the execution of programs depend on intermediate values.
 \pause
-\item Side-channel attacks on the pre-image vector computation \cite{KA21, TCHES:GMRR22}, leverage this fact to find the secret key. 
-\pause
+\item Side-channel attacks on the pre-image vector computation \cite{KA21, TCHES:GMRR22}, leverage this fact to find the secret key.
 \end{itemize}
 %\vspace{-4pt}
 %\begin{figure}
@@ -15,25 +18,31 @@
 
 \end{frame}
 
+%
+%
+%
+\fi
 
 
 \begin{frame}{Masking}
 
-Masking resists such threats by secret-sharing the sensitive variables.
+Masking resists side-channel attacks by secret-sharing the sensitive variables.
 \pause
 \begin{itemize}
-	\item Boolean Masking: A variable $x$ is split into $n$ shares $(x_i)$ such that
+	\item Boolean Masking: A variable $x$ is split into $n$ shares $(x_i)_{1\leq i \leq n}$ such that
 	\[
 	x = \bigoplus_{i=1}^n x_i
 	\]
 	\pause
-	\item Arithmetic Masking: A variable $x$ is split into $n$ shares $(x_i)$ (when stored in a $k$-bit register) such that
+	\item Arithmetic Masking: A variable $x$ is split into $n$ shares $(x_i)_{1\leq i \leq n}$ (in $k$-bit registers) such that
 	\[
 	x = \sum_{i=1}^n x_i \quad (\bmod\; 2^k)
 	\]
 \end{itemize}
 \medskip
-In each run, all $x_i$'s are randomized so that any $n-1$ shares of them are independently and uniformly distributed.
+\pause
+
+In each run, all $x_i$'s are freshly randomized.
 
 \end{frame}
 

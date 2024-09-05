@@ -1,8 +1,5 @@
 \begin{frame}{Overview of Our Approach}
 
-We now show how we mask {\sf FPR}, {\sf FprMul}, and {\sf FprAdd}.
-\pause
-
 An intuitive approach to mask any algorithm:
 \pause
 
@@ -30,17 +27,17 @@ However, some operations in floating-point number arithmetic cannot be easily im
 \begin{itemize}
 	\item Checking whether a secret value is nonzero
 	\begin{itemize}
-		\item Given $(x_i)$, checking whether $\bigoplus_{i=1}^n x_i \neq 0$ or $\sum_{i=1}^n x_i \neq 0$
+		\item Given $(x_i)_{1\leq i \leq n}$, checking whether $\bigoplus_{i=1}^n x_i \neq 0$ or $\sum_{i=1}^n x_i \neq 0$
 	\end{itemize}
 	\pause
 	\item Right-shifting a secret value by another secret value
 	\begin{itemize}
-		\item Given $(x_i)$ and $(c_i)$, right-shifting $(x_i)$ by $(c_i)$
+		\item Given $(x_i)_{1\leq i \leq n}$ and $(c_i)_{1\leq i \leq n}$, right-shifting $(x_i)_{1\leq i \leq n}$ by $(c_i)_{1\leq i \leq n}$
 	\end{itemize}
 	\pause
 	\item Normalizing a secret value to $[2^{63},2^{64})$
 	\begin{itemize}
-		\item Given $(x_i)$, left-shifting $(x_i)$ until its 64th bit is set
+		\item Given $(x_i)_{1\leq i \leq n}$, left-shifting $(x_i)_{1\leq i \leq n}$ until its 64th bit is set
 	\end{itemize}
 \end{itemize}
 
@@ -99,14 +96,14 @@ FprAdd:
 
 \begin{frame}{Overview of Our Approach}
 
-We design novel gadgets for these three operations, including:
+We design novel gadgets for these three operations, including
 \pause
 \begin{itemize}
-	\item {\sf SecNonzero} (Algorithm \ref{alg:SecNonzero}): securely checking whether a secret value is nonzero.
+	\item {\sf SecNonzero}: securely checking whether a secret value is nonzero
 	\pause
-	\item {\sf SecFprUrsh} (Algorithm \ref{alg:SecFprUrsh}): securely right-shifting a secret value by another secret value
+	\item {\sf SecFprUrsh}: securely right-shifting a secret value by another secret value
 	\pause
-	\item {\sf SecFprNorm64} (Algorithm \ref{alg:SecFprNorm64}): securely normalizing a secret value to $[2^{63}, 2^{64})$
+	\item {\sf SecFprNorm64}: securely normalizing a secret value to $[2^{63}, 2^{64})$
 \end{itemize}
 \pause
 In addition, we make several improvements to reduce the costs.
@@ -114,6 +111,10 @@ In addition, we make several improvements to reduce the costs.
 \end{frame}
 
 
+%
+%
+%
+\iffalse
 \begin{frame}{Gadgets Used in Our Work}
 
 \begin{table}
@@ -137,3 +138,7 @@ ${\sf B2A_{Bit}}$ & One-bit {\sf B2A} conversion & \cite{PKC:SPOG19} \\
 \end{table}
 
 \end{frame}
+%
+%
+%
+\fi

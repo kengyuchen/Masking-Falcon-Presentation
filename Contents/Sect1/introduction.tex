@@ -1,9 +1,9 @@
 \begin{frame}{Introduction}
 
 \begin{itemize}
-    \item To defend the potential threat from large-scale quantum computers, the US National Institute of Standards and Technology (NIST) initiated standardization process for post-quantum cryptography in 2016.
+    \item To defend against the potential threat from large-scale quantum computers, the US National Institute of Standards and Technology (NIST) initiated a standardization process for post-quantum cryptography in 2016.
     \pause
-    \item In 2022, four selected algorithms – CRYSTALS-Kyber, CRYSTALS-Dilithium, \textsc{Falcon}, and SPHINCS+ were expected to be part of NIST's post-quantum cryptographic standards.
+    \item In 2022, \textsc{Falcon} \cite{NISTPQC-R3:FALCON20} became one of the selected schemes that were expected to be part of NIST's post-quantum cryptographic standards.
     \pause
     \item  In theory, these algorithms can base their security on problems that are considered still hard given the advantage of quantum computing.
     \pause
@@ -29,16 +29,22 @@
 \begin{tabular}{ l | c | c }
  & Attack & Countermeasure \\
 \hline
-\makecell{{\color{red}Pre-image Vector Computation}} & \cite{KA21, TCHES:GMRR22} & \textcolor<2>{red}{None} \\
+\makecell{{\color{red}Pre-image Vector Computation}} & \cite{KA21, TCHES:GMRR22} & \only<2->{\textbf{This Paper}} \\
 \hline
 \makecell{{\textcolor{black!30!green}{Gaussian Sampler over Lattices}}} & \cite{TCHES:GMRR22, EC:ZLYW23} & \cite{TCHES:GMRR22, EC:ZLYW23} \\ 
 \end{tabular}
 }
 \end{center}
-    
+
+\only<2->{
+Our Contribution: The first masking scheme on the the pre-image vector computation as a countermeasure against current attacks.}
+
 \end{frame}
 
-
+%
+%
+%
+\iffalse
 \begin{frame}{Our Contributions}
 
 In this paper, we present the following contributions:
@@ -46,20 +52,22 @@ In this paper, we present the following contributions:
 \begin{itemize}
     \item We propose the first masking scheme on the floating-point number multiplication and addition in the pre-image vector computation of \textsc{Falcon} as a countermeasure.
     \pause
-    \item We verify higher-order security of our design in the probing model.
-    \pause
-    \item To test the practical leakage of our work, we conduct the Test Vector Leakage Assessment (TVLA) \cite{gilbert2011testing} experiments.
+    \item We verify theoretical security in the probing model \cite{C:IshSahWag03} and practical leakage via the Test Vector Leakage Assessment (TVLA) \cite{gilbert2011testing}.
     \pause
     \item We also test the performance by comparing with the reference implementation of \textsc{Falcon} \cite{NISTPQC-R3:FALCON20}.
 \end{itemize}
 
 
 \end{frame}
+%
+%
+%
+\fi
 
 
 \begin{frame}{Notation}
 
-Throughout the presentation, we assume
+We assume
 \pause
 \begin{itemize}
 %    \item $M > N$ are two positive integers and $N = 2^\kappa$ for some integer $\kappa$.
