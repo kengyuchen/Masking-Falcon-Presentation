@@ -3,12 +3,12 @@
 \begin{itemize}
 \item Power consumption during the execution of programs depends on intermediate values.
 \pause
-\item Power analysis attacks, the side-channel attacks on the pre-image vector computation, leverage this fact to find the secret key. 
+\item Power analysis attacks leverage this fact to find the secret key. 
 \pause
 \end{itemize}
 \vspace{-4pt}
 \begin{figure}
-\includegraphics[width=.45\textwidth]{Figure/trace_example.png}
+\includegraphics[width=.7\textwidth]{Figure/trace_example_ECC.png}
 \vspace{-5pt}
 \caption{An Example of a Power Trace}
 \end{figure}
@@ -44,6 +44,12 @@ Masking defends such threats by secret-sharing the sensitive variables.
 \item All operations need to be operated via shares.
 \end{itemize}
 
+For example, if $x$ is a secret variable, the operation $y \gets {\sf pt} \oplus x$ will become 
+\[
+	\begin{cases} y_1 \gets {\sf pt} \oplus x_1 \\ y_2 \gets {\sf pt} \oplus x_2  \end{cases} x_1,x_2 \getsdollar \{0,1\}^*, x_1 \oplus x_2 = x
+\]
+
+The variables with secret information are splitted into shares.
 
 \end{frame}
 

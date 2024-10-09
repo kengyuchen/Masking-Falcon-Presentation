@@ -7,7 +7,7 @@ The pre-image vector computation includes polynomial multiplications
 \]
 \pause
 
-To speed up and apply the fast Fourier nearest plane algorithm, the pre-image vector computation is performed in the Fourier domain:
+To speed up, the pre-image vector computation is performed after a Fourier transform:
 \[
 \frac{1}{q} \left[ \begin{array}{c|c} {\sf FFT}(c) \odot {\sf FFT}(-F) & {\sf FFT}(c) \odot {\sf FFT}(f) \end{array} \right]
 \]
@@ -44,8 +44,8 @@ FPN multiplication (FprMul) is proceeded by
     \only<2->{\begin{enumerate} \item Sign bit XOR}
     \only<3->{\item Exponent Addition}
     \only<4->{\item Mantissa Multiplication}
-    \only<5->{\item Right-shifting the mantissa to $[2^{54}, 2^{55})$}
-    \only<6->{\item Combining the results and rounding (FPR)}
+    \only<5->{\item Right-shifting the mantissa }
+    \only<6->{\item Packing and rounding (FPR)}
 \only<2->{\end{enumerate}}
 
 \column{0.5\textwidth}
@@ -54,8 +54,8 @@ FPN addition (FprAdd) is proceeded by
     \only<7->{\begin{enumerate} \item  Making the first operand $\geq$ the second}
     \only<8->{ \item Right-shifting the second operand}
     \only<9->{ \item Mantissa Addition / Subtraction}
-    \only<10->{ \item Normalizing the sum to $[2^{54}, 2^{55})$}
-	\only<11->{\item  Combining the results and rounding (FPR)}
+    \only<10->{ \item Normalizing the result}
+    \only<11->{\item Packing and rounding (FPR)}
 \only<7->{\end{enumerate}}
 
 \end{columns}
@@ -70,16 +70,16 @@ FPN addition (FprAdd) is proceeded by
 
 In floating-point arithmetic, when shifted right, the mantissa maintains a sticky bit
 \[
-1001\textcolor{black!50!green}{0}\textcolor{red}{0100} \gg 4 \to 1001\underbrace{\textcolor{blue}{1}}_{\text{Sticky}}
+	1001\textcolor{black!50!green}{0}\textcolor{red}{0100} \gg 4 \to 1001\underbrace{\textcolor{blue}{1}}_{\text{Sticky}}
 \]
 It indicates whether there exists any $1$ after the least significant bit. In the above example,
 \[
-\text{sticky bit} = \textcolor{black!50!green}{0} \vee \llbracket (\textcolor{red}{0100}) \neq 0 \rrbracket = \llbracket (\textcolor{black!50!green}{0}\textcolor{red}{0100}) \neq 0 \rrbracket
+	\text{sticky bit} = \textcolor{black!50!green}{0} \vee \llbracket (\textcolor{red}{0100}) \neq 0 \rrbracket = \llbracket (\textcolor{black!50!green}{0}\textcolor{red}{0100}) \neq 0 \rrbracket
 \]
 
 \end{frame}
 
-\iffalse
+%\iffalse
 %
 %
 %
@@ -99,7 +99,7 @@ It indicates whether there exists any $1$ after the least significant bit. In th
     \STATE $e \gets e + 1076$
     \STATE $b \gets \llbracket e < 0 \rrbracket$
     \STATE $z \gets z \wedge (b-1)$
-    \STATE $b \gets \llbracket z \neq 0 \rrbracket $
+	\STATE \textcolor{red}{$b \gets \llbracket z \neq 0 \rrbracket $}
     \STATE $e \gets e \wedge (-b)$
     \STATE $x \gets ((s \ll 63) \vee (z \gg 2)) + e \ll 52$
     \STATE $f \gets {\tt0XC8} \gg z^{[3:1]} $
@@ -128,13 +128,13 @@ It indicates whether there exists any $1$ after the least significant bit. In th
     \STATE $s \gets sx \oplus sy$ \label{alg:FprMul:signbit}
     \STATE $e \gets ex + ey - 2100$ \label{alg:FprMul:exponent}
     \STATE $z \gets mx \times my$ \label{alg:FprMul:mantissa}
-    \STATE $b \gets \llbracket z^{[50:1]} \neq 0 \rrbracket$
+	\STATE \textcolor{red}{$b \gets \llbracket z^{[50:1]} \neq 0 \rrbracket$}
     \STATE $z \gets z^{[106:51]} \vee b$
     \STATE $z' \gets (z \gg 1) \vee z^{(1)}$
     \STATE $w \gets z^{(106)}$
     \STATE $z \gets z \oplus (z \oplus z') \wedge (-w)$
     \STATE $e \gets e + w$
-    \STATE $bx \gets \llbracket ex \neq 0 \rrbracket$, $by \gets \llbracket ey \neq 0 \rrbracket$
+	\STATE \textcolor{red}{$bx \gets \llbracket ex \neq 0 \rrbracket$, $by \gets \llbracket ey \neq 0 \rrbracket$}
     \STATE $b \gets bx \wedge by$
     \STATE $z \gets z \wedge (-b)$ \\
     \RETURN \hskip -4pt ${\sf FPR}(s, e, z)$
@@ -170,11 +170,11 @@ It indicates whether there exists any $1$ after the least significant bit. In th
     \STATE $c \gets ex - ey$
     \STATE $b \gets \llbracket c < 60 \rrbracket$ \label{alg:FprAdd:large_exp_start}
     \STATE $my \gets my \wedge (-b) $ \label{alg:FprAdd:large_exp_end}
-    \STATE $my \gets (my \gg c) \vee \llbracket my^{[c:1]} \neq 0 \rrbracket$ \label{alg:FprAdd:unsigned-right-shift}
+	\STATE \textcolor{red}{$my \gets (my \gg c) \vee \llbracket my^{[c:1]} \neq 0 \rrbracket$ \label{alg:FprAdd:unsigned-right-shift}}
     \STATE $s \gets sx \oplus sy$
     \STATE $z \gets mx + (-1)^s my $
-    \STATE Normalize $z, ex$ to make the 64th bit of $z$ set \label{alg:FprAdd:normalize}
-    \STATE $z \gets (z \gg  9) \vee \llbracket z^{[9:1]} \neq 0 \rrbracket$
+	\STATE \textcolor{red}{Normalize $z, ex$ to make $z \in [2^{63}, 2^{64})$ \label{alg:FprAdd:normalize}}
+	\STATE $z \gets (z \gg  9) \vee \textcolor{red}{\llbracket z^{[9:1]} \neq 0 \rrbracket}$
     \STATE $ex \gets ex + 9$ \\
     \RETURN \hskip -4pt ${\sf FPR}(sx, ex, z)$
   \end{algorithmic}
@@ -189,4 +189,4 @@ It indicates whether there exists any $1$ after the least significant bit. In th
 %
 %
 %
-\fi
+%\fi

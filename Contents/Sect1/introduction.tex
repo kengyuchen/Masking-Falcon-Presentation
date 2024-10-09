@@ -57,7 +57,7 @@ Unfortunately, there are attacks on \textsc{Falcon} that have not been addressed
 \begin{tabular}{ l | c | c }
  & Attack & Countermeasure \\
 \hline
-\makecell{{\color{red}Pre-image Vector Computation}} & \cite{KA21, TCHES:GMRR22} & \textcolor<2>{red}{None} \\
+	\makecell{{\color{red}Pre-image Vector Computation}} & \cite{KA21, TCHES:GMRR22} & \only<2>{\textbf{[This Paper]}} \\
 \hline
 \makecell{{\textcolor{black!30!green}{Gaussian Sampler over Lattices}}} & \cite{TCHES:GMRR22, EC:ZLYW23} & \cite{TCHES:GMRR22, EC:ZLYW23} \\ 
 \end{tabular}
@@ -67,18 +67,18 @@ Unfortunately, there are attacks on \textsc{Falcon} that have not been addressed
 \end{frame}
 
 
-\begin{frame}{Our Contributions}
+\begin{frame}{Our Contribution}
 
 In this paper, we present the following contributions:
 \pause
 \begin{itemize}
-    \item We propose the first masking scheme on the floating-point number multiplication and addition in the pre-image vector computation of \textsc{Falcon} as a countermeasure.
+    \item We propose the first masking scheme on the floating-point number multiplication and addition of \textsc{Falcon} as a countermeasure.
     \pause
     \item We verify the high-order security of our design in the probing model.
     \pause
-    \item To test the practical leakage of our work, we conduct the Test Vector Leakage Assessment (TVLA) \cite{gilbert2011testing} experiments.
+    \item We test the practical leakage by the Test Vector Leakage Assessment (TVLA) \cite{gilbert2011testing} experiments.
     \pause
-    \item We also test the performance by comparing with the reference implementation of \textsc{Falcon} \cite{NISTPQC-R3:FALCON20}.
+    \item We test the performance by comparing with the reference implementation of \textsc{Falcon} \cite{NISTPQC-R3:FALCON20}.
 \end{itemize}
 
 

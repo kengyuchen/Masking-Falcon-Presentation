@@ -1,55 +1,6 @@
 % \begin{frame}{Introduction to \textsc{Falcon}}
 
-% \begin{itemize}
-%     \item A NIST PQC standardized digital signature
-%     \item Use thw Gentry-Peikert-Vaikuntanathan (GPV) framework \cite{STOC:GenPeiVai08} with NTRU lattice
-%     % \item Public Key: Matrix $A \in \Z^{n \times m}_q$
-%     % \item Private Key: Matrix $B \in \Z_q^{m \times m}$ where $BA^t = 0 \; \text{mod} \; q$
-%     % \item Hash Function: $H(\cdot)$
-%     % \item Given message $m$, a valid signature is a short $s$ where $sA^t = H(m)$
-%     % \item To verify a message $m$ with signature $s$, check
-%     % \begin{enumerate}
-%     %     \item $s$ is short
-%     %     \item $sA^t = H(m)$
-%     % \end{enumerate}
-%     % \item The security relies on the hardness of finding a short vector solution.
-% \end{itemize}
-% \medskip
-% \begin{columns}[T]
-
-% \column{.33\textwidth}
-% \begin{block}{KeyGen}
-% Public Key: $\mathbf{A} \in \Z^{N \times M}_q$\\
-% Secret Key: Short $\mathbf{B} \in \Z_q^{M \times M}$
-% \vskip -10pt
-% \[ \mathbf{BA}^T = \mathbf{0} \bmod q \]
-% \end{block}
-
-% \column{.3\textwidth}
-% \begin{block}{Sign(${\sf m}$)}
-% A short $\mathbf{s}$ s.t.
-% \vskip -22pt
-% \[ \mathbf{sA}^T = H({\sf m}) \bmod q \]
-% \vskip -8pt
-% $H:\{0,1\}^* \to \{0,1\}^N$
-% \end{block}
-
-% \column{.3\textwidth}
-% \begin{block}{Verify(${\sf m}$, $\mathbf{s}$)}
-% Check
-% \begin{enumerate}
-%     \item $\mathbf{s}$ is short
-%     \item $\mathbf{sA}^T = H({\sf m}) \bmod q$
-% \end{enumerate}
-% \end{block}
-
-% \end{columns}
-    
-% \end{frame}
-
-\begin{frame}{Introduction to \textsc{Falcon}}
-
-To find such a vector $\mathbf{z}$,
+\begin{frame}{Randomized Nearest-Plane Algorithm \cite{STOC:GenPeiVai08}}
 
 \centerline{
 \begin{minipage}{.9\textwidth}
@@ -57,16 +8,16 @@ To find such a vector $\mathbf{z}$,
 \vskip -8pt
 \begin{algorithm}[H]
 \label{alg:nearest-plane}
-\algsetup{linenosize=\scriptsize}
+\algsetup{linenosize=\small}
     \small
     \begin{algorithmic}[1]
-        \REQUIRE $\mathbf{c}, \mathbf{B}$ where $\mathbf{B} = \mathbf{\tilde BU}$ is the Gram-Schmidt Orthogonalization, constant $\sigma > 0$
+		\REQUIRE $\mathbf{t} = \mathbf{c}\mathbf{B}^{-1}, \mathbf{B}$ where $\mathbf{B} = \mathbf{\tilde BU}$ is the Gram-Schmidt Orthogonalization, constant $\sigma > 0$
         \ENSURE $\mathbf{z} = (z_1, z_2, \cdots, z_M)$
-        % \STATE $\mathbf{t} = (t_1, t_2, \cdots, t_M) \gets \mathbf{B}^{-1}\mathbf{c}$
         \FOR{$i = M$ \TO $1$}
             \STATE $t_i' \gets t_i + \sum_{j>i}\mathbf{U}_{ij}(t_j - z_j)$
-            \STATE $\sigma_i \gets \frac{\sigma}{\| \mathbf{\tilde b}_i \|}$ \COMMENT{$\mathbf{\tilde b}_i$ is the $i$-th row vector of $\mathbf{\tilde B}$}
-            \STATE $z_i \gets D_{\Z,\sigma_i',t_i'}$
+            \STATE $\sigma_i \gets \frac{\sigma}{\| \mathbf{\tilde b}_i \|}$ \quad \COMMENT{$\mathbf{\tilde b}_i$ is the $i$-th row vector of $\mathbf{\tilde B}$}
+            \STATE $z_i \getsdollar D_{\Z,\sigma_i,t_i'}$ \quad \COMMENT{Sample a value $z_i$ from a discrete Gaussian distribution }
+
         \ENDFOR
     \end{algorithmic}
 \end{algorithm}
@@ -75,7 +26,19 @@ To find such a vector $\mathbf{z}$,
 \end{minipage}}
 \medskip
 
+\pause
 
-Falcon uses fast Fourier nearest plane algorithm \cite{ducas2016fast} to speed up lines 2 to 6.
+\centerline{
+\begin{minipage}{.9\textwidth}
+\begin{proposition}{Lemma 4.5 in \cite{STOC:GenPeiVai08}}
+\vskip -4pt
+If $\sigma \geq \|\mathbf{\tilde B}\| \cdot \omega(\sqrt{\log(n)}) = \max_{i} \|\mathbf{\tilde b}_i\| \cdot \omega(\sqrt{\log(n)})$, then $\mathbf{z}\mathbf{B} \stackrel \Delta\sim D_{\mathcal{L}(\mathbf{B}),\sigma,\mathbf{c}}$.
+\end{proposition}
+\end{minipage}}
+\medskip
+
+\pause
+
+\textsc{Falcon} uses fast Fourier nearest plane algorithm \cite{ducas2016fast} to further speed up.
     
 \end{frame}

@@ -17,7 +17,7 @@ Secret Key: Short $\mathbf{B} \in \Z_q^{M \times M}$
 
 \column{.3\textwidth}
 \begin{block}{Sign(${\sf m}$)}
-A short $\mathbf{s}$ s.t.
+A short signature $\mathbf{s}$ s.t.
 \vskip -22pt
 \[ \mathbf{sA}^T = H({\sf m}) \bmod q \]
 \vskip -8pt
@@ -46,7 +46,7 @@ To find such a short $\mathbf{s}$, one can first
     \pause
     \item Find a solution $\mathbf{c}$ (not short) where $\mathbf{c}\mathbf{A}^T = H({\sf m}) \bmod q$
     \pause
-    \item \textcolor{red}{Compute the pre-image vector $\mathbf{t} \gets \mathbf{c}\mathbf{B}^{-1}$}
+    \item \textcolor<7>{red}{Compute the pre-image vector $\mathbf{t} \gets \mathbf{c}\mathbf{B}^{-1}$}
     \pause
     \item Apply the nearest plane algorithm to find an integer vector $\mathbf{z}$ such that $\mathbf{(t-z)B}$ is short.
     \pause
@@ -55,7 +55,9 @@ To find such a short $\mathbf{s}$, one can first
 
 \end{frame}
 
-%\input{Contents/Sect2/nearest-plane}
+
+\input{Contents/Sect2/nearest-plane}
+
 
 \begin{frame}{Introduction to \textsc{Falcon}}
 
@@ -73,12 +75,16 @@ g & -f \\ \hline G & -F
     \item Public polynomial $h = gf^{-1} \bmod q$ and $\mathbf{A}^T = \left[
 \begin{array}{c} 1 \\ \hline h \end{array} \right]$ 
 	\pause
-	\item $\mathbf{c} = \left[
-\begin{array}{c|c} c & 0 \\ \end{array} \right]$, where $c = H({\sf r} \| {\sf m})$ for the message $\sf m$ and a random salt $\sf r$.
+	\item $\mathbf{c} = \left[ \begin{array}{c|c} c & 0 \\ \end{array} \right ]$, where $c = H({\sf r} \| {\sf m})$ for the message $\sf m$ and a random salt $\sf r$.
+
+    \item Short polynomials $s_1$ and $s_2$ where
+    \[
+	    s_1 + s_2h = \left[ \begin{array}{c|c} s_1 & s_2 \\ \end{array} \right] \mathbf{A}^T = H({\sf r} \| {\sf m}) \bmod q
+    \]
 \end{itemize}
 
-\pause
-Moreover, \textsc{Falcon} applies the fast Fourier nearest plane algorithm \cite{ducas2016fast} to speed up the signing process.
+% \pause
+% Moreover, \textsc{Falcon} applies the fast Fourier nearest plane algorithm \cite{ducas2016fast} to speed up the signing process.
 
 \end{frame}
 
