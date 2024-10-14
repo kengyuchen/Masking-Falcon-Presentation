@@ -3,13 +3,13 @@
 In this paper,
 \pause
 \begin{itemize}
-	\item We present the first masking algorithm for floating-point number multiplication and addition to protect the pre-image vector computation.
+	\item We present the first masking scheme for floating-point number multiplication and addition to protect the pre-image vector computation of \textsc{Falcon}.
 	\pause
-	\item We design novel gadgets {\sf SecNonzero}, {\sf SecFprUrsh}, and {\sf SecFprNorm64} to mask the algorithms.
+	\item We design novel gadgets {\sf SecNonzero}, {\sf SecFprUrsh}, and {\sf SecFprNorm64}.
 	\pause
-	\item All our masked algorithms are proven $t$-NI or $t$-SNI secure – they are $t$-probing secure.
+	\item All our masked gadgets are proven either $t$-NI or $t$-SNI secure.
 	\pause
-	\item The TVLA result shows no leakage in the 2-shared version in 10,000 traces, and no leakage in the 3-shared version in 100,000 traces.
+	\item Our design pass the TVLA test in 10,000 (for 2-shared) or 100,000 (for 3-shared) traces.
 	\pause
 	\item Our countermeasure when compared to the unmasked reference implementation is much slower. Improved {\sf SecAdd} and {\sf A2B} can reduce the cost.
 \end{itemize}

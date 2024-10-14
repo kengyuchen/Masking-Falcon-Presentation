@@ -38,85 +38,84 @@
 \medskip
 
 \only<1>{
-We show how we mask the floating-point number addition algorithm FprAdd.
+	We show how we mask the floating-point number addition algorithm FprAdd.
 }
 
 \only<2>{
-By the output of SecFprMul, we assume the input shares $(x_i)$ and $(y_i)$ are 64-bit Boolean-masked FPNs.
+	By the output of SecFprMul, we assume the input shares $(x_i)$ and $(y_i)$ are 64-bit Boolean-masked FPNs.
 }
 
 
 \only<3>{
-The subtraction of two Boolean-masked values can be operated by considering $x^{[63:1]} - y^{[63:1]} = x^{[63:1]} + (\neg y^{[63:1]}) + 1$, which takes two {\sf SecAdd}s.
+	The subtraction of two Boolean-masked values can be operated by considering $x^{[63:1]} - y^{[63:1]} = x^{[63:1]} + (\neg y^{[63:1]}) + 1$, which takes two {\sf SecAdd}s.
 }
 
 
 \only<4>{
-But since we only need $(x^{[63:1]} - y^{[63:1]})^{(64)}$, we only compute $x^{[63:1]} + (\neg y^{[63:1]})$ and then check the boundary conditions. This saves us one {\sf SecAdd}.
+	But since we only need $(x^{[63:1]} - y^{[63:1]})^{(64)}$, we only compute $x^{[63:1]} + (\neg y^{[63:1]})$ and then check the boundary conditions. This saves us one {\sf SecAdd}.
 }
 
 \only<5>{
-That is, $\llbracket u - v < 0 \rrbracket = \llbracket u + (\neg v) < 0 \rrbracket \oplus \llbracket u + (\neg v) = -1 \rrbracket \oplus \llbracket u + (\neg v) = 2^{63} - 1 \rrbracket $
+	That is, $\llbracket u - v < 0 \rrbracket = \llbracket u + (\neg v) < 0 \rrbracket \oplus \llbracket u + (\neg v) = -1 \rrbracket \oplus \llbracket u + (\neg v) = 2^{63} - 1 \rrbracket $
 }
 
 \only<6>{
-Moreover, we apply $u + (\neg v) \neq -1 \Leftrightarrow \neg (u + (\neg v)) \neq 0$
- and
-$
- u + (\neg v) \neq 2^{63}-1 \Leftrightarrow (u + (\neg v)) \oplus (1 \ll 63) \neq -1 \Leftrightarrow \neg( (u + (\neg v)) \oplus (1 \ll 63)) \neq 0
-$
+	Moreover, we apply $u + (\neg v) \neq -1 \Leftrightarrow \neg (u + (\neg v)) \neq 0$
+	 and
+	$
+	 u + (\neg v) \neq 2^{63}-1 \Leftrightarrow (u + (\neg v)) \oplus (1 \ll 63) \neq -1 \Leftrightarrow \neg( (u + (\neg v)) \oplus (1 \ll 63)) \neq 0
+	$
 }
 
 \only<7>{
-Therefore, these operations can be computed by {\sf SecNonzero}, {\sf SecAnd}, and {\sf SecOr}.
+	Therefore, these operations can be computed by {\sf SecNonzero}, {\sf SecAnd}, and {\sf SecOr}.
 }
 
 
 \only<8>{
-Share-wise operations, two {\sf B2A}s to convert $(ex_i)$ and $(ey_i)$ to arithmetic shares, and subtractions to any shares.
+	Share-wise operations, two {\sf B2A}s to convert $(ex_i)$ and $(ey_i)$ to arithmetic shares, and subtractions to any shares.
 }
 
 
 \only<9>{
-Subtraction to any share of $c$ by 60 and an {\sf A2B} to get the MSB of $c$. Then apply the simple trick.
+	Subtraction to any share of $c$ by 60 and an {\sf A2B} to get the MSB of $c$. Then apply the tricks.
 }
 
 
 \only<10>{
-This is by our gadget {\sf SecFprUrsh}.
+	This is by our gadget {\sf SecFprUrsh}.
 }
 
 
 \only<11>{
-A Share-wise operation.
+	A share-wise operation.
 }
 
 
 \only<12>{
-Considering the simple trick with $my + (my \oplus (-my)) \wedge -s$, where $-my = (\neg my) + 1$ is derived by an {\sf SecAdd}. Then add the result to $mx$.
+	Use the tricks with $my + (my \oplus (-my)) \wedge -s$, where $-my = (\neg my) + 1$ is derived by an {\sf SecAdd}. Then add the result to $mx$.
 }
 
 
 \only<13>{
-This is by our gadget {\sf SecFprNorm64}.
+	This is by our gadget {\sf SecFprNorm64}.
 }
 
 
 \only<14>{
-A Share-wise operation and a {\sf SecNonzero}. Add $9$ to any share of $ex$.
+	A share-wise operation and a {\sf SecNonzero}. Add $9$ to any share of $ex$.
 }
 
 
 \only<15>{
-Finally, it calls FPR to return a 64-bit Boolean-masked FPN.
+	Finally, it calls FPR to return a 64-bit Boolean-masked FPN.
 }
 
 \end{frame}
 
-%
-%
-%
+
 \fi
+
 
 
 \begin{frame}{SecFprAdd: Secure FprAdd}
@@ -138,10 +137,6 @@ Finally, it calls FPR to return a 64-bit Boolean-masked FPN.
     \STATE $(d_i) \gets {\sf SecAdd}( (xm_i), (ym_i) )$ \label{alg:SecFprAdd:SecAdd_1}
     \STATE $(b_i) \gets {\sf SecNonzero}( \neg d_1, d_2, \cdots , d_n )$ \label{alg:SecFprAdd:check_1}
     \STATE $(b_i') \gets {\sf SecNonzero}( \neg (d_1 \oplus (1 \ll 63) ), d_2, \cdots , d_n )$ \label{alg:SecFprAdd:check_2}
-    % \STATE $(ym_i) \gets {\sf SecAdd}( (ym_i), (1, 0, \cdots, 0) )$ \label{alg:SecFprAdd:SecAdd_1}
-    % \STATE $(d_i) \gets {\sf SecAdd}( (xm_i), (ym_i) )$  \label{alg:SecFprAdd:SecAdd_2}
-    % \STATE $(b_i) \gets {\sf SecNonzero}( (d_i) )$
-    % \STATE $b_1 \gets \neg b_1$
     \STATE $(cs_i) \gets {\sf SecAnd} ( (\neg b_1, b_2, \cdots, b_n) , (x_i^{(64)}) )$
     \STATE $(cs_i) \gets {\sf SecOr} ( (cs_i),  (d_i^{(64)} \oplus b_i \oplus b_i')  )$
     \STATE $(m_i) \gets {\sf SecAnd}( (x_i \oplus y_i), (-cs_i) )$
@@ -162,10 +157,8 @@ Finally, it calls FPR to return a 64-bit Boolean-masked FPN.
     \STATE $(my_i) \gets (my_i \oplus my'_i)$ 
     \STATE $(z_i) \gets {\sf SecAdd}( (mx_i),  (my_i) )$  \label{alg:SecFprAdd:SecAdd_3}
     \STATE $(z_i), (ex_i) \gets {\sf SecFprNorm64}( (z_i), (ex_i) )$
-    % \STATE $(b_i) \gets {\sf SecNonzero} ( (z_i^{[9:1]}) )$
     \STATE $(b_i) \gets {\sf SecNonzero} ( (z_i^{[10:1]}) )$
     \STATE $(z_i) \gets (z_i \gg 9)$ \label{alg:SecFprAdd:shift_9}
-    % \STATE $(z_i) \gets {\sf SecOr} ( (z_i),  (b_i) )$ 
     \STATE $(z_i^{(1)}) \gets (b_i) $ 
     \STATE $ex_1 \gets ex_1 + 9$
     \STATE \Return ${\sf SecFPR} ( {\sf Refresh}((sx_i)), (ex_i), (z_i) )$

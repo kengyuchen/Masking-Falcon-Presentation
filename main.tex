@@ -39,7 +39,7 @@
 
 \section{Introduction}
 
-\input{Contents/Sect1/introduction}
+\include{Contents/Sect1/introduction}
 
 
 \section{Preliminaries}
@@ -52,26 +52,21 @@
 
 \subsection{Power Analysis and Masking}
 \include{Contents/Sect2/masking}
-%\input{Contents/Sect2/tvla}
+
 
 \section{Masked Floating-Point Number Multiplication and Addition}
+
 \subsection{Overview of Our Approach}
 \include{Contents/Sect3/gadgets}
 
-\subsection{SecNonzero}
-\include{Contents/Sect3/SecNonzero}
+\subsection{Tricks to Removing Branches}
+\include{Contents/Sect3/tricks}
 
-\subsection{SecFprUrsh}
-\include{Contents/Sect3/SecFprUrsh}
-
-\subsection{SecFprNorm64}
-\include{Contents/Sect3/SecFprNorm64}
 
 \subsection*{Wrapping-up}
 \include{Contents/Sect3/wrapup}
 %\input{Contents/Sect3/SecFPR}
 %\input{Contents/Sect3/SecFprMul}
-
 
 
 \section{Evaluation and Implementation}
@@ -103,19 +98,20 @@
 \appendix
 \backupbegin
 
-\section{Appendix - Algorithms of Floating-Point Number Arithmetic}
-\label{sec:appendix-fpu}
-\include{Contents/Appendix/fpu}
+% \section{Appendix - Algorithms of Floating-Point Number Arithmetic}
+% \label{sec:appendix-fpu}
+% \include{Contents/Appendix/fpu}
 
 \section{Appendix – Details of Our Design}
 \label{sec:appendix}
 \hypertarget{sec:appendix}{}
 
-\ifhandout
-\else
-\subsection{Simple Tricks}
-\include{Contents/Sect3/tricks}
-\fi
+\subsection{New Gadgets}
+\include{Contents/Sect3/SecNonzero}
+
+\include{Contents/Sect3/SecFprUrsh}
+
+\include{Contents/Sect3/SecFprNorm64}
 
 \subsection{SecFPR: Secure FPR}
 \include{Contents/Sect3/SecFPR}

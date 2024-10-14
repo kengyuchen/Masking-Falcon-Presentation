@@ -72,10 +72,7 @@ ${\sf B2A_{Bit}}$ & $t$-SNI & {\sf SecFprMul} & $t$-SNI\\
 
 \begin{frame}{Test Vector Leakage Assessment (TVLA)}
 
-Probing model validates the security theoretically.
-\pause
-
-In practice, the Test Vector Leakage Assessment (TVLA) methodology \cite{gilbert2011testing} can be applied.
+For practical security validation, we apply the Test Vector Leakage Assessment (TVLA) methodology \cite{gilbert2011testing}.
 \pause
 
 A tester records two sets of traces where
@@ -91,114 +88,9 @@ A tester records two sets of traces where
 The Welch's $t$-test is then applied on the two sets.
 \pause
 
-By convention, we consider the leakage is significant if the $t$-value exceeds $\pm 4.5$.
+By convention, the leakage is significant if the $t$-value exceeds $\pm 4.5$.
 \pause
 
-For traces with a large number of points, we refer to \cite{ding2018towards} alter this threshold to avoid false positives.
+Our TVLA result shows no leakage in the 2-shared version in 10,000 traces, and no leakage in the 3-shared version in 100,000 traces.
 
 \end{frame}
-
-
-\begin{frame}{Experiment Setup}
-
-We implement our algorithms in the following setting:
-\pause
-
-\begin{itemize}
-\item Plain-C code
-\pause
-\item Compiled by {\tt arm-none-eabi-gcc 10.3.1}
-\pause
-\item Using ChipWhisperer with target board STM32F303 with an ARM Cortex-M4 MCU
-\pause
-\item We compare the result with the reference implementation of the NIST Round-3 Submission of \textsc{Falcon} \cite{NISTPQC-R3:FALCON20}.
-\end{itemize}
-
-\end{frame}
-
-
-
-
-\begin{frame}{TVLA}
-
-The TVLA results of floating-point number multiplication (FprMul, SecFprMul).
-
-\begin{columns}[T]
-\column{.34\textwidth}
-\begin{figure}
-\includegraphics[width=\textwidth]{Figure/tvla/fprmul_1k.png}
-\vspace{-20pt}
-\caption{1,000 traces, unmasked FprMul}
-\end{figure}
-
-\column{.34\textwidth}
-\begin{figure}
-\includegraphics[width=\textwidth]{figure/tvla/1013_SecFprMul_2shares_10k.png}
-\vspace{-20pt}
-\caption{10,000 traces, 2-shared SecFprMul}
-\end{figure}
-
-\column{.34\textwidth}
-\begin{figure}
-\includegraphics[width=\textwidth]{figure/tvla/SecFprMul_3shares_100k.png}
-\vspace{-20pt}
-\caption{100,000 traces, 3-shared SecFprMul}
-\end{figure}
-
-\end{columns}
-
-
-\end{frame}
-
-
-
-\begin{frame}{TVLA}
-
-The TVLA results of floating-point number addition (FprAdd, SecFprAdd).
-
-\vskip -15pt
-\begin{columns}[T]
-\column{.34\textwidth}
-\begin{figure}
-\includegraphics[width=\textwidth]{figure/tvla/fpradd_1k.png}
-\vspace{-20pt}
-\caption{1,000 traces, unmasked FprAdd}
-\end{figure}
-
-\column{.34\textwidth}
-\begin{figure}
-\includegraphics[width=\textwidth]{figure/tvla/1012_SecFprAdd_2shares_10k.png}
-\vspace{-20pt}
-\caption{10,000 traces, 2-shared SecFprAdd}
-\end{figure}
-
-\column{.34\textwidth}
-\begin{figure}
-\includegraphics[width=\textwidth]{figure/tvla/SecFprAdd_3shares_100k.png}
-\vspace{-20pt}
-\caption{100,000 traces, 3-shared SecFprAdd}
-\end{figure}
-
-\end{columns}
-
-
-\end{frame}
-
-
-%
-%\begin{frame}{TVLA}
-%
-%The 3-shared version show no obvious leakage in even 100,000 traces. We adapt the thresholds (green) \cite{ding2018towards} to $\pm 6.603$ for {\sf SecFprMul} and $\pm 6.646$ for {\sf SecFprAdd}.
-%
-%\vskip -15pt
-%\begin{columns}[T]
-%\column{.5\textwidth}
-%\begin{figure}
-%\includegraphics[width=\textwidth]{figure/tvla/SecFprMul_3shares_100k.png}
-%\vspace{-20pt}
-%\caption{100,000 traces, 3-shared SecFprMul}
-%\end{figure}
-
-
-
-%\end{frame}

@@ -19,15 +19,15 @@
 
 \begin{frame}{Masking}
 
-Masking defends such threats by secret-sharing the sensitive variables.
+Masking defends against such threats by secret-sharing the sensitive variables.
 \pause
 \begin{itemize}
-	\item Boolean Masking: A variable $x$ is split into $n$ shares $(x_i)$ such that
+	\item Boolean Masking: A variable $x$ is split into $n$ shares $(x_i)_{1 \leq i \leq n}$ such that
 	\[
 	x = \bigoplus_{i=1}^n x_i
 	\]
 	\pause
-	\item Arithmetic Masking: A variable $x$ is split into $n$ shares $(x_i)$ (when stored in a $k$-bit register) such that
+	\item Arithmetic Masking: A variable $x$ is split into $n$ shares $(x_i)_{1 \leq i \leq n}$ (when stored in a $k$-bit register) such that
 	\[
 	x = \sum_{i=1}^n x_i \quad (\bmod\; 2^k)
 	\]
@@ -43,10 +43,10 @@ Masking defends such threats by secret-sharing the sensitive variables.
 \pause
 \item All operations need to be operated via shares.
 \end{itemize}
-
+\pause
 For example, if $x$ is a secret variable, the operation $y \gets {\sf pt} \oplus x$ will become 
 \[
-	\begin{cases} y_1 \gets {\sf pt} \oplus x_1 \\ y_2 \gets {\sf pt} \oplus x_2  \end{cases} x_1,x_2 \getsdollar \{0,1\}^*, x_1 \oplus x_2 = x
+	\begin{cases} y_1 \gets {\sf pt} \oplus x_1 \\ y_2 \gets x_2  \end{cases} \text{where } x_1,x_2 \getsdollar \{0,1\}^*, x_1 \oplus x_2 = x
 \]
 
 The variables with secret information are splitted into shares.

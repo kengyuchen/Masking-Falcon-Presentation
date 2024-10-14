@@ -1,45 +1,5 @@
 \begin{frame}{Introduction to \textsc{Falcon}}
 
-\begin{itemize}
-    \item A NIST-standardized digital signature
-    \item Use the Gentry-Peikert-Vaikuntanathan (GPV) framework \cite{STOC:GenPeiVai08} with NTRU lattices
-\end{itemize}
-\medskip
-\begin{columns}[T]
-
-\column{.33\textwidth}
-\begin{block}{KeyGen}
-Public Key: $\mathbf{A} \in \Z^{N \times M}_q$\\
-Secret Key: Short $\mathbf{B} \in \Z_q^{M \times M}$
-\vskip -10pt
-\[ \mathbf{BA}^T = \mathbf{0} \bmod q \]
-\end{block}
-
-\column{.3\textwidth}
-\begin{block}{Sign(${\sf m}$)}
-A short signature $\mathbf{s}$ s.t.
-\vskip -22pt
-\[ \mathbf{sA}^T = H({\sf m}) \bmod q \]
-\vskip -8pt
-$H:\{0,1\}^* \to \{0,1\}^N$
-\end{block}
-
-\column{.3\textwidth}
-\begin{block}{Verify(${\sf m}$, $\mathbf{s}$)}
-Check
-\begin{enumerate}
-    \item $\mathbf{s}$ is short
-    \item $\mathbf{sA}^T = H({\sf m}) \bmod q$
-\end{enumerate}
-\end{block}
-
-\end{columns}
-    
-\end{frame}
-
-
-\begin{frame}{Introduction to \textsc{Falcon}}
-
 \vskip -10pt
 \begin{columns}[T]
 
@@ -104,122 +64,26 @@ Check
 \end{frame}
 
 
-
-
 \begin{frame}{Introduction to \textsc{Falcon}}
 
 To find such a short $\mathbf{s}$, one can first
 \pause
 \begin{itemize}
-    \item Compute $H({\sf m})$
+    \item Compute $c \gets H({\sf r} \| {\sf m})$.
     \pause
-    \item Find a solution $\mathbf{c}$ (not short) where $\mathbf{c}\mathbf{A}^T = H({\sf m}) \bmod q$
+    \item Find a solution $\mathbf{c} \gets \left[
+		\begin{array}{c|c} c & 0 \end{array}
+		\right]$ such that $\mathbf{c}\mathbf{A}^T = H({\sf r} \| {\sf m}) \bmod q$.
     \pause
-    \item \textcolor<7>{red}{Compute the pre-image vector $\mathbf{t} \gets \mathbf{c}\mathbf{B}^{-1}$}
+    \item \textcolor<7->{red}{Compute the pre-image vector $\mathbf{t} \gets \mathbf{c}\mathbf{B}^{-1}$.}
     \pause
-    \item Apply the nearest plane algorithm to find an integer vector $\mathbf{z}$ such that $\mathbf{(t-z)B}$ is short.
+    \item Apply the nearest plane algorithm to find a vector $\mathbf{z}$ such that $\mathbf{(t-z)B}$ is short.
     \pause
-    \item $\mathbf{s} \gets \mathbf{(t-z)B}$. Note that $\mathbf{s}\mathbf{A}^T = H({\sf m}) \bmod q$
+    \item $\mathbf{s} \gets \mathbf{(t-z)B}$. Note that $\mathbf{s}\mathbf{A}^T = H({\sf r} \| {\sf m}) \bmod q$.
 \end{itemize}
-
 \end{frame}
 
 
 \input{Contents/Sect2/nearest-plane}
 
 
-\begin{frame}{Introduction to \textsc{Falcon}}
-
-In Falcon,
-\pause
-\begin{itemize}
-    \item Short secret polynomials $f, g, F, G \in \Z[x] / (x^N+1)$ where
-    \[
-    fG - gF = q \qquad \mathbf{B} = \left[
-\begin{array}{c|c}
-g & -f \\ \hline G & -F
-\end{array} \right]
-    \]
-    \pause
-    \item Public polynomial $h = gf^{-1} \bmod q$ and $\mathbf{A}^T = \left[
-\begin{array}{c} 1 \\ \hline h \end{array} \right]$ 
-	\pause
-	\item $\mathbf{c} = \left[ \begin{array}{c|c} c & 0 \\ \end{array} \right ]$, where $c = H({\sf r} \| {\sf m})$ for the message $\sf m$ and a random salt $\sf r$.
-
-    \item Short polynomials $s_1$ and $s_2$ where
-    \[
-	    s_1 + s_2h = \left[ \begin{array}{c|c} s_1 & s_2 \\ \end{array} \right] \mathbf{A}^T = H({\sf r} \| {\sf m}) \bmod q
-    \]
-\end{itemize}
-
-% \pause
-% Moreover, \textsc{Falcon} applies the fast Fourier nearest plane algorithm \cite{ducas2016fast} to speed up the signing process.
-
-\end{frame}
-
-
-%\begin{frame}{Introduction to \textsc{Falcon}}
-%Signature of a message ${\sf m}$ consists of
-%\begin{itemize}
-%    \item Random salt ${\sf r}$
-%    \item Short polynomials $s_1$ and $s_2$ where
-%    \[
-%    s_1 + s_2h = \left[ \begin{array}{c|c} s_1 & s_2 \\ \end{array} \right] \mathbf{A}^T = H({\sf r} \| {\sf m}) \bmod q
-%    \]
-%\end{itemize}
-%
-%\end{frame}
-
-
-\begin{frame}{Introduction to \textsc{Falcon}}
-
-% \centerline{
-% \begin{minipage}{0.7\textwidth}
-\begin{columns}[T]
-\column{0.6\textwidth}
-\begin{block}{{\large Sign (Simplified)}}
-
-\begin{algorithm}[H]
-  \label{alg:falcon-sign}
-  \algsetup{linenosize=\small}
-  \begin{algorithmic}[1]
-    \REQUIRE Message ${\sf m}$, secret key ${\sf sk}$, bound $\lfloor \beta^2 \rfloor$
-    \ENSURE Signature ${\sf sig}$
-    \STATE Sample salt ${\sf r} \gets \{0, 1\}^{320}$ uniformly
-    \STATE $c \gets H({\sf r} \| {\sf m})$
-    \STATE \textcolor<2>{red}{Compute the pre-image vector $\mathbf{t} \gets \left[
-\begin{array}{c|c} c & 0 \\ \end{array} \right] \cdot \mathbf{B}^{-1}$}
-    \REPEAT
-        \STATE $\mathbf{z} = {\sf ffSampling}(\mathbf{t}, {\sf sk})$
-        \STATE $\mathbf{s} = \left[ \begin{array}{c|c} s_1 & s_2 \\ \end{array} \right] = (\mathbf{t} - \textbf{z})\mathbf{B}$
-    \UNTIL{$\| \mathbf{s} \|^2 \leq \lfloor \beta^2 \rfloor$}
-    \STATE ${\sf sig} \gets ({\sf r}, s_2)$
-  \end{algorithmic}
-\end{algorithm}
-
-\end{block}
-% \end{minipage}}
-\column{.35\textwidth}
-\begin{block}{{\large Verify (Simplified)}}
-
-\begin{algorithm}[H]
-  \label{alg:falcon-verify}
-  \algsetup{linenosize=\small}
-  \begin{algorithmic}[1]
-    \REQUIRE Message ${\sf m}$, signature ${\sf sig}$
-    \REQUIRE Bound $\lfloor \beta^2 \rfloor$
-    \ENSURE Accept or Reject
-    \STATE $c \gets H({\sf r} \| {\sf m})$
-    \STATE $s_1 \gets c - s_2 h \bmod q$
-    \IF{$\| (s_1, s_2) \|^2 \leq \lfloor \beta^2 \rfloor $}
-        \STATE Accept
-    \ELSE
-        \STATE Reject
-    \ENDIF
-  \end{algorithmic}
-\end{algorithm}
-
-\end{block}
-\end{columns}
-    
-\end{frame}

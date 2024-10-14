@@ -3,38 +3,40 @@
 \begin{frame}{Randomized Nearest-Plane Algorithm \cite{STOC:GenPeiVai08}}
 
 \centerline{
-\begin{minipage}{.9\textwidth}
-\begin{block}{Randomized Nearest-Plane Algorithm \cite{STOC:GenPeiVai08}}
-\vskip -8pt
-\begin{algorithm}[H]
-\label{alg:nearest-plane}
-\algsetup{linenosize=\small}
-    \small
-    \begin{algorithmic}[1]
+	\begin{minipage}{.9\textwidth}
+	\begin{block}{Randomized Nearest-Plane Algorithm \cite{STOC:GenPeiVai08}}
+	\vskip -8pt
+	\begin{algorithm}[H]
+	\label{alg:nearest-plane}
+	\algsetup{linenosize=\small}
+	\small
+	\begin{algorithmic}[1]
 		\REQUIRE $\mathbf{t} = \mathbf{c}\mathbf{B}^{-1}, \mathbf{B}$ where $\mathbf{B} = \mathbf{\tilde BU}$ is the Gram-Schmidt Orthogonalization, constant $\sigma > 0$
-        \ENSURE $\mathbf{z} = (z_1, z_2, \cdots, z_M)$
-        \FOR{$i = M$ \TO $1$}
+		\ENSURE $\mathbf{z} = (z_1, z_2, \cdots, z_{2N})$
+        \FOR{$i = 2N$ \TO $1$}
             \STATE $t_i' \gets t_i + \sum_{j>i}\mathbf{U}_{ij}(t_j - z_j)$
-            \STATE $\sigma_i \gets \frac{\sigma}{\| \mathbf{\tilde b}_i \|}$ \quad \COMMENT{$\mathbf{\tilde b}_i$ is the $i$-th row vector of $\mathbf{\tilde B}$}
-            \STATE $z_i \getsdollar D_{\Z,\sigma_i,t_i'}$ \quad \COMMENT{Sample a value $z_i$ from a discrete Gaussian distribution }
+            \STATE $\sigma_i \gets \frac{\sigma}{\| \mathbf{\tilde b}_i \|}$ \qquad { // $\mathbf{\tilde b}_i$ is the $i$-th row vector of $\mathbf{\tilde B}$}
+			\STATE $z_i \getsdollar D_{\Z,\sigma_i,t_i'}$ \qquad {// Sample a value $z_i$ from a discrete Gaussian distribution}
 
         \ENDFOR
     \end{algorithmic}
-\end{algorithm}
+	\end{algorithm}
 
-\end{block}
-\end{minipage}}
+	\end{block}
+	\end{minipage}
+}
 \medskip
 
 \pause
 
 \centerline{
-\begin{minipage}{.9\textwidth}
-\begin{proposition}{Lemma 4.5 in \cite{STOC:GenPeiVai08}}
-\vskip -4pt
-If $\sigma \geq \|\mathbf{\tilde B}\| \cdot \omega(\sqrt{\log(n)}) = \max_{i} \|\mathbf{\tilde b}_i\| \cdot \omega(\sqrt{\log(n)})$, then $\mathbf{z}\mathbf{B} \stackrel \Delta\sim D_{\mathcal{L}(\mathbf{B}),\sigma,\mathbf{c}}$.
-\end{proposition}
-\end{minipage}}
+	\begin{minipage}{.9\textwidth}
+	\begin{proposition}{Lemma 4.5 in \cite{STOC:GenPeiVai08}}
+		\vskip -4pt
+		If $\sigma \geq \|\mathbf{\tilde B}\| \cdot \omega(\sqrt{\log(N)}) = \max_{i} \|\mathbf{\tilde b}_i\| \cdot \omega(\sqrt{\log(N)})$, then $\mathbf{z}\mathbf{B} \stackrel \Delta\sim D_{\mathcal{L}(\mathbf{B}),\sigma,\mathbf{c}}$.
+	\end{proposition}
+	\end{minipage}
+}
 \medskip
 
 \pause
