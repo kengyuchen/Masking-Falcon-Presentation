@@ -21,6 +21,14 @@
 \end{frame}
 
 
+\begin{frame}
+\begin{figure}
+	\includegraphics[width=\textwidth]{Figure/paper_title.png}
+	\caption*{Accepcted by Cryptographic Hardware and Embedded Systems (CHES) 2024}
+\end{figure}
+\end{frame}
+
+
 
 \begin{frame}
 \frametitle{Table of Contents}
@@ -37,30 +45,30 @@
 \section{Preliminaries}
 
 \subsection{\textsc{Falcon}}
-\input{Contents/Sect2/falcon}
+\include{Contents/Sect2/falcon}
 
 \subsection{Floating-Point Number Arithmetic}
-\input{Contents/Sect2/fpu}
+\include{Contents/Sect2/fpu}
 
 \subsection{Power Analysis and Masking}
-\input{Contents/Sect2/masking}
+\include{Contents/Sect2/masking}
 %\input{Contents/Sect2/tvla}
 
 \section{Masked Floating-Point Number Multiplication and Addition}
 \subsection{Overview of Our Approach}
-\input{Contents/Sect3/gadgets}
+\include{Contents/Sect3/gadgets}
 
 \subsection{SecNonzero}
-\input{Contents/Sect3/SecNonzero}
+\include{Contents/Sect3/SecNonzero}
 
 \subsection{SecFprUrsh}
-\input{Contents/Sect3/SecFprUrsh}
+\include{Contents/Sect3/SecFprUrsh}
 
 \subsection{SecFprNorm64}
-\input{Contents/Sect3/SecFprNorm64}
+\include{Contents/Sect3/SecFprNorm64}
 
 \subsection*{Wrapping-up}
-\input{Contents/Sect3/wrapup}
+\include{Contents/Sect3/wrapup}
 %\input{Contents/Sect3/SecFPR}
 %\input{Contents/Sect3/SecFprMul}
 
@@ -69,16 +77,16 @@
 \section{Evaluation and Implementation}
 
 \subsection{Security}
-\input{Contents/Sect4/security}
+\include{Contents/Sect4/security}
 
 \subsection{Performance}
-\input{Contents/Sect4/performance}
+\include{Contents/Sect4/performance}
 
 
 
 \section{Conclusion}
 
-\input{Contents/Sect5/conclusion}
+\include{Contents/Sect5/conclusion}
 
 
 \section*{Reference}
@@ -97,7 +105,7 @@
 
 \section{Appendix - Algorithms of Floating-Point Number Arithmetic}
 \label{sec:appendix-fpu}
-\input{Contents/Appendix/fpu}
+\include{Contents/Appendix/fpu}
 
 \section{Appendix – Details of Our Design}
 \label{sec:appendix}
@@ -106,17 +114,17 @@
 \ifhandout
 \else
 \subsection{Simple Tricks}
-\input{Contents/Sect3/tricks}
+\include{Contents/Sect3/tricks}
 \fi
 
 \subsection{SecFPR: Secure FPR}
-\input{Contents/Sect3/SecFPR}
+\include{Contents/Sect3/SecFPR}
 
 \subsection{SecFprMul: Secure FprMul}
-\input{Contents/Sect3/SecFprMul}
+\include{Contents/Sect3/SecFprMul}
 
 \subsection{SecFprAdd: Secure FprAdd}
-\input{Contents/Sect3/SecFprAdd}
+\include{Contents/Sect3/SecFprAdd}
 
 \backupend
 

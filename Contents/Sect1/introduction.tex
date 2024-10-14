@@ -9,34 +9,20 @@
 \end{frame}
 
 
-\begin{frame}{Theoretical Security - Hardness of Mathematical Problems}
+\begin{frame}{Theoretical and Real-World Security}
 
 In theory, these algorithms can base their security on problems that are considered still hard given the advantage of quantum computing.
-
+\pause
 \begin{enumerate}
     \item CRYSTALS-Kyber: Module Learning With Errors (MLWE)
     \item CRYSTALS-Dilithium: Module Short Integer Solution (MSIS)
     \item \textsc{Falcon}: NTRU Problem and SIS on NTRU lattices
     \item SPHINCS+: Security of the used hash function families
 \end{enumerate}
-
-\end{frame}
-
-
-\begin{frame}{Real-World Security – Side-Channel Attacks}
-
-In practice, the implementations of these algorithms can suffer side-channel attacks. Fortunately, there are countermeasures for them.
-
-\begin{enumerate}
-    \item CRYSTALS-Kyber: \cite{TCHES:BGRSv21, TCHES:FBRKSVS22, EPRINT:HKLPSS22}
-    \item CRYSTALS-Dilithium: \cite{ACNS:MGTF19}
-    \item {\color<2>{red} \textsc{Falcon}: \cite{PQCRYPTO:HPRR20, TCHES:GMRR22, EC:ZLYW23} }
-    \item SPHINCS+: \cite{bertoni2010building,IEEE:7223170}
-\end{enumerate}
-\pause
 \medskip
+\pause
 
-Unfortunately, there are attacks on \textsc{Falcon} that have not been addressed.
+In practice, the implementations of these algorithms need side-channel countermeasure, and there exist attacks on \textsc{Falcon} that have not been addressed (until our paper).
 
 \end{frame}
 
@@ -64,24 +50,6 @@ Unfortunately, there are attacks on \textsc{Falcon} that have not been addressed
 }
 \end{center}
     
-\end{frame}
-
-
-\begin{frame}{Our Contribution}
-
-In this paper, we present the following contributions:
-\pause
-\begin{itemize}
-    \item We propose the first masking scheme on the floating-point number multiplication and addition of \textsc{Falcon} as a countermeasure.
-    \pause
-    \item We verify the high-order security of our design in the probing model.
-    \pause
-    \item We test the practical leakage by the Test Vector Leakage Assessment (TVLA) \cite{gilbert2011testing} experiments.
-    \pause
-    \item We test the performance by comparing with the reference implementation of \textsc{Falcon} \cite{NISTPQC-R3:FALCON20}.
-\end{itemize}
-
-
 \end{frame}
 
 
