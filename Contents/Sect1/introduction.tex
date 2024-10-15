@@ -1,51 +1,37 @@
-\begin{frame}{Introduction}
-
-\begin{itemize}
-    \item To defend the potential threat from large-scale quantum computers, the US National Institute of Standards and Technology (NIST) initiated standardization process for post-quantum cryptography in 2016.
-    \pause
-    \item In 2022, four selected algorithms – CRYSTALS-Kyber, CRYSTALS-Dilithium, \textsc{Falcon}, and SPHINCS+ were expected to be part of NIST's post-quantum cryptographic standards.
-\end{itemize}
-    
-\end{frame}
-
-
 \begin{frame}{Theoretical and Real-World Security}
 
-In theory, these algorithms can base their security on problems that are considered still hard given the advantage of quantum computing.
-\pause
-\begin{enumerate}
-    \item CRYSTALS-Kyber: Module Learning With Errors (MLWE)
-    \item CRYSTALS-Dilithium: Module Short Integer Solution (MSIS)
-    \item \textsc{Falcon}: NTRU Problem and SIS on NTRU lattices
-    \item SPHINCS+: Security of the used hash function families
-\end{enumerate}
-\medskip
-\pause
+\begin{itemize}
+	\item In 2022, the US National Institute of Standards and Technology (NIST) selected four algorithms for its post-quantum cryptography standardization process.
+	\pause
 
-In practice, the implementations of these algorithms need side-channel countermeasure, and there exist attacks on \textsc{Falcon} that have not been addressed (until our paper).
+	\item In theory, these algorithms can base their security on problems that are considered still hard given large-scale quantum computing.
+	\pause
+
+	\item In practice, the implementations of these algorithms need side-channel countermeasures.
+	\pause
+
+	\item There exist attacks on \textsc{Falcon} that have not been addressed (until our paper).
+\end{itemize}
 
 \end{frame}
 
 
 \begin{frame}{Attacks on \textsc{Falcon}}
 
-%\begin{figure}
-%    \centering
-%    \includegraphics[width=\textwidth]{tikz/falcon-sign.png}
-%    \caption{A graphical overview of {\sf FALCON.Sign}}
-%    \label{fig:enter-label}
-%\end{figure}
-
 \input{tikz/falcon-sign}
 
 \begin{center}
 {\small
 \begin{tabular}{ l | c | c }
- & Attack & Countermeasure \\
-\hline
+	 & Attack & Countermeasure \\
+
+	\hline
+	
 	\makecell{{\color{red}Pre-image Vector Computation}} & \cite{KA21, TCHES:GMRR22} & \only<2>{\textbf{[This Paper]}} \\
-\hline
-\makecell{{\textcolor{black!30!green}{Gaussian Sampler over Lattices}}} & \cite{TCHES:GMRR22, EC:ZLYW23} & \cite{TCHES:GMRR22, EC:ZLYW23} \\ 
+	
+	\hline
+	
+	\makecell{{\textcolor{black!30!green}{Gaussian Sampler over Lattices}}} & \cite{TCHES:GMRR22, EC:ZLYW23} & \cite{TCHES:GMRR22, EC:ZLYW23} \\ 
 \end{tabular}
 }
 \end{center}

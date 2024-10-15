@@ -44,7 +44,10 @@
 				\mathbf{sA}^T = H({\sf r} \| {\sf m}) \bmod q
 			\]
 			\vskip -5pt
-			where $H$ is a hash function and $r$ is the random salt
+			\begin{itemize}
+				\item $H$: hash function
+				\item $r$: random salt
+			\end{itemize}
 		}
 	\end{block}
 
@@ -77,13 +80,14 @@ To find such a short $\mathbf{s}$, one can first
     \pause
     \item \textcolor<7->{red}{Compute the pre-image vector $\mathbf{t} \gets \mathbf{c}\mathbf{B}^{-1}$.}
     \pause
-    \item Apply the nearest plane algorithm to find a vector $\mathbf{z}$ such that $\mathbf{(t-z)B}$ is short.
+	\item Apply the nearest plane algorithm (\hyperlink{sec:appendix-nearest-plane}{\color{blue}Appendix – Nearest-Plane Algorithm}) to find a vector $\mathbf{z}$ such that $\mathbf{(t-z)B}$ is short.
     \pause
     \item $\mathbf{s} \gets \mathbf{(t-z)B}$. Note that $\mathbf{s}\mathbf{A}^T = H({\sf r} \| {\sf m}) \bmod q$.
 \end{itemize}
 \end{frame}
 
 
-\input{Contents/Sect2/nearest-plane}
+
+
 
 

@@ -24,7 +24,7 @@
 \begin{frame}
 \begin{figure}
 	\includegraphics[width=\textwidth]{Figure/paper_title.png}
-	\caption*{Accepcted by Cryptographic Hardware and Embedded Systems (CHES) 2024}
+	\caption*{\cite{TCHES:CC24}: Accepcted by Cryptographic Hardware and Embedded Systems (CHES) 2024}
 \end{figure}
 \end{frame}
 
@@ -88,8 +88,6 @@
 
 \begin{frame}[allowframebreaks]{Reference}
 
-% \nocite{*}
-
 \printbibliography[title=Reference]
 
 \end{frame}
@@ -101,10 +99,14 @@
 % \section{Appendix - Algorithms of Floating-Point Number Arithmetic}
 % \label{sec:appendix-fpu}
 % \include{Contents/Appendix/fpu}
+\section{Appendix – Nearest-Plane Algorithm}
+\label{sec:appendix-nearest-plane}
+\hypertarget{sec:appendix-nearest-plane}
+\input{Contents/Sect2/nearest-plane}
 
 \section{Appendix – Details of Our Design}
-\label{sec:appendix}
-\hypertarget{sec:appendix}{}
+\label{sec:appendix-gadgets-design}
+\hypertarget{sec:appendix-gadgets-design}{}
 
 \subsection{New Gadgets}
 \include{Contents/Sect3/SecNonzero}
@@ -121,6 +123,12 @@
 
 \subsection{SecFprAdd: Secure FprAdd}
 \include{Contents/Sect3/SecFprAdd}
+
+\section{Appendix - Examples of Non-Interference Security}
+\label{sec:appendix-tni}
+\hypertarget{sec:appendix-tni}{}
+\include{Contents/Appendix/tni-example}
+
 
 \backupend
 

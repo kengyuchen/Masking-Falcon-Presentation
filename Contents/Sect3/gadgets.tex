@@ -1,8 +1,5 @@
 \begin{frame}{Overview of Our Approach}
 
-We now show how we mask {\sf FPR}, {\sf FprMul}, and {\sf FprAdd}.
-\pause
-
 An intuitive approach to mask an algorithm:
 \pause
 
@@ -38,7 +35,7 @@ For example, if $x$ is a secret variable, the operation $y \gets {\sf pt} \oplus
 	\begin{algorithmic}[1]
 		\REQUIRE ${\sf pt}, x$ 
 		\ENSURE $(z_1, z_2)$ such that $z_1 + z_2 = ({\sf pt} \oplus x) \times x$
-        \STATE Sample $x_1,x_2 \getsdollar \{0,1\}^*$ such that $x_1 \oplus x_2 = x$
+        \STATE Sample $x_1,x_2$ uniformly such that $x_1 \oplus x_2 = x$
 		\STATE $y_1 \gets {\sf pt} \oplus x_1$ 
 		\STATE $y_2 \gets x_2$
 		\STATE $(x_1', x_2') \gets {\sf B2A}((x_1, x_2))$ \quad // $x_1'+x_2' = x_1 \oplus x_2 = x$ 
@@ -84,10 +81,6 @@ However, some operations in floating-point number arithmetic cannot be easily im
 
 \begin{frame}{Overview of Our Approach}
 
-%\only<2>{Checking whether a secret value is nonzero:}
-%\only<3>{Right-shifting a secret value by another secret value:}
-%\only<4>{Normalizing a secret value to $[2^{54},2^{55})$:}
-%\medskip
 Let's see where these operations are:
 \begin{itemize}
 	\item \alt<2>{\textcolor{red}{Check whether a secret value is nonzero}} {Check whether a secret value is nonzero}
@@ -127,13 +120,13 @@ FprAdd:
 \begin{frame}{Overview of Our Approach}
 
 We design novel gadgets for these three operations, including:
-\only<2->{ \begin{itemize} }
-	\only<2->{ \item {\sf SecNonzero}: securely check whether a secret value is nonzero}
+\visible<2->{ \begin{itemize} }
+	\visible<2->{ \item {\sf SecNonzero}: securely check whether a secret value is nonzero}
 
-	\only<3->{ \item {\sf SecFprUrsh}: securely right-shift a secret value by another secret value}
+	\visible<3->{ \item {\sf SecFprUrsh}: securely right-shift a secret value by another secret value}
 	
-	\only<4->{ \item {\sf SecFprNorm64}: securely normalize a secret value to $[2^{63}, 2^{64})$}
-\only<2->{ \end{itemize} }
+	\visible<4->{ \item {\sf SecFprNorm64}: securely normalize a secret value to $[2^{63}, 2^{64})$}
+\visible<2->{ \end{itemize} }
 \medskip
 
 \only<2>{
@@ -147,7 +140,7 @@ We design novel gadgets for these three operations, including:
 
 \only<3>{
 	\begin{block}{SecFprUrsh}
-		Given 64-bit shares $(x_i)$ and 6-bit $(c_i)$, output shares $(z_i)$ such that
+		Given 64-bit shares $(x_i)$ and 6-bit shares $(c_i)$, output shares $(z_i)$ such that
 		\[
 			\bigoplus_{i=1}^n z_i = \left( \left( \bigoplus_{i=1}^n x_i \right) \gg \left( \sum_{i=1}^n c_i \bmod 2^{6} \right) \right) \vee \left \llbracket \bigoplus_{i=1}^n x_i^{[c:1]} \neq 0 \right \rrbracket
 		\]

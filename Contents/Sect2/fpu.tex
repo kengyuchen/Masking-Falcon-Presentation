@@ -43,22 +43,22 @@ For convenience, we may use $(s, e, m)$ to represent an FPN.
 \begin{columns}[T]
 \column{0.5\textwidth}
 FPN multiplication (FprMul) is proceeded by
-    \only<2->{\begin{enumerate} \item Sign bit XOR}
-    \only<3->{\item Exponent Addition}
-    \only<4->{\item Mantissa Multiplication}
-    \only<5->{\item Right-shifting the mantissa }
-    \only<6->{\item Packing and rounding (FPR)}
-\only<2->{\end{enumerate}}
+    \visible<2->{\begin{enumerate} \item Sign bit XOR}
+    \visible<3->{\item Exponent Addition}
+    \visible<4->{\item Mantissa Multiplication}
+    \visible<5->{\item Right-shifting the mantissa }
+    \visible<6->{\item Packing and rounding (FPR)}
+\visible<2->{\end{enumerate}}
 
 \column{0.5\textwidth}
 FPN addition (FprAdd) is proceeded by
 
-    \only<7->{\begin{enumerate} \item  Making the first operand $\geq$ the second}
-    \only<8->{ \item Right-shifting the second operand}
-    \only<9->{ \item Mantissa Addition / Subtraction}
-    \only<10->{ \item Normalizing the result}
-    \only<11->{\item Packing and rounding (FPR)}
-\only<7->{\end{enumerate}}
+    \visible<7->{\begin{enumerate} \item  Making the first operand $\geq$ the second}
+    \visible<8->{ \item Right-shifting the second operand}
+    \visible<9->{ \item Mantissa Addition / Subtraction}
+    \visible<10->{ \item Normalizing the result}
+    \visible<11->{\item Packing and rounding (FPR)}
+\visible<7->{\end{enumerate}}
 
 \end{columns}
 \medskip

@@ -1,0 +1,120 @@
+
+\begin{frame}{$t$-Non-Interference - Example (XOR of Boolean Shares)}
+
+\centerline{
+\begin{minipage}{.7\textwidth}
+	\begin{block}{XOR of Boolean Shares}
+
+		\begin{algorithm}[H]
+		  \algsetup{linenosize=\small}
+		  \small
+		  \begin{algorithmic}[1]
+			\REQUIRE $(x_i)$ where $x = x_1 \oplus \cdots \oplus x_n$, $(y_i)$ where $y = y_1 \oplus \cdots \oplus y_n$
+			\ENSURE $(z_i)$ where $x \oplus y = z_1  \oplus \cdots \oplus z_n$
+			\FOR{$i=1$ to $n$}
+				\STATE $z_i \gets x_i \oplus y_i$
+			\ENDFOR
+		  \end{algorithmic}
+		\end{algorithm}
+
+	\end{block}
+\end{minipage}
+}
+\pause
+\medskip
+
+\begin{itemize}
+	
+	\item Intermediate Variables: $(z_i)$.
+	\pause
+
+	\item Simulator: For any probing set $\{ z_i \mid i \in I \}$ of size $|I| = t$, let the simulation set be $\{ x_i \mid i \in I \}, \{ y_i \mid i \in I \}$. The simulator receives the simulation set and outputs $\{(x_i \oplus y_i) \mid i \in I\}$.
+	\pause
+
+	\item Distribution of the probing set is identical to the distribution of the simulator's output $\{(x_i \oplus y_i) \mid i \in I\}$.
+	\pause
+
+	\item The size of the simulation set for each input is $|I| \leq t$, no more than the probing set.
+
+\end{itemize}
+\pause
+
+Therefore, this gadget is $t$-NI secure for any $t$.
+
+\end{frame}
+
+
+\begin{frame}{$t$-Non-Interference - Example (AND of Boolean Shares)}
+
+\centerline{
+\begin{minipage}{0.65\textwidth}
+	\begin{block}{AND of Boolean Shares}
+
+		\begin{algorithm}[H]
+		  \algsetup{linenosize=\small}
+		  \small
+		  \begin{algorithmic}[1]
+			\REQUIRE $(x_i)$ where $x = x_1 \oplus \cdots \oplus x_n$, $(y_i)$ where $y = y_1 \oplus \cdots \oplus y_n$
+			\ENSURE $(z_i)$ where $x \wedge y = z_1 \oplus  \cdots \oplus z_n$
+			\STATE Initialize all $z_i$ to $0$.
+			\FOR{$i=1$ to $n$}
+			\FOR{$j=1$ to $n$}
+				\STATE $z_i \gets z_i \oplus (x_i \wedge y_j)$
+			\ENDFOR
+			\ENDFOR
+		  \end{algorithmic}
+		\end{algorithm}
+
+	\end{block}
+\end{minipage}
+}
+\pause
+\medskip
+
+This gadget is not even $1$-NI. If the adversary probes the intermediate value
+\[
+	(x_1 \wedge y_1) \oplus (x_1 \wedge y_2)
+\]
+
+One cannot simulate this without knowing $x_1$ (1 share of $x$) and $y_1, y_2$ ({\color{red} 2} shares of $y$).
+
+\end{frame}
+
+
+\begin{frame}{$t$-Strong-Non-Interference - Example (SecAnd)}
+
+\centerline{
+\begin{minipage}{.7\textwidth}
+	\begin{block}{SecAnd}
+
+		\begin{algorithm}[H]
+		  \algsetup{linenosize=\small}
+		  \small
+		  \begin{algorithmic}[1]
+			\REQUIRE $(x_i)$ where $x = x_1 \oplus \cdots \oplus x_n$, $(y_i)$ where $y = y_1 \oplus \cdots \oplus y_n$
+			\ENSURE $(z_i)$ where $x \wedge y = z_1 \oplus  \cdots \oplus z_n$
+			
+			\FOR{$i=1$ to $n$}
+				\STATE $z_i \gets x_i \wedge y_i$
+			\ENDFOR
+
+			\FOR{$i=1$ to $n$}
+			\FOR{$j=i+1$ to $n$}
+				\STATE $r \getsdollar \{0,1\}^k$
+				\STATE $z_i \gets z_i \oplus ( ({x_i \wedge y_j} \oplus r) \oplus {x_j \wedge y_i})$
+				\STATE $z_j \gets z_j \oplus r$
+			\ENDFOR
+			\ENDFOR
+		  \end{algorithmic}
+		\end{algorithm}
+
+	\end{block}
+\end{minipage}
+}
+\medskip
+
+This gadget is $t$-NI. It is actually also $t$-SNI.
+
+\end{frame}
+
+
